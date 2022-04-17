@@ -1,0 +1,45 @@
+{
+  "success": true,
+  "code": 0,
+  "message": "",
+  "data": {
+    "valid_address": [
+      {
+        "id": "625897543cb1a30001679785",
+        "gender": 1,
+        "mobile": "12345678901",
+        "location": {
+          "typecode": "121301",
+          "address": "浦东新区芳华路",
+          "name": "芳华小区",
+          "location": [
+            129.853,
+            23.107899
+          ],
+          "id": "B00155I86E"
+        },
+        "label": "",
+        "user_name": "张三",
+        "addr_detail": "98-505",
+        "station_id": "5hjg2044716de106791b456b",
+        "station_name": "芳华站",
+        "is_default": true,
+        "city_number": "0101",
+        "info_status": 1,
+        "station_info": {
+          "id": "5hjg2044716de106791b456b",
+          "address": "",
+          "name": "芳华站",
+          "phone": "10103365",
+          "business_time": "24h",
+          "city_name": "上海市",
+          "city_number": "0101"
+        },
+        "village_id": "5hjg2044716de106791b456b"
+      }
+    ],
+    "invalid_address": [],
+    "max_address_count": 10,
+    "can_add_address": true
+  }
+}

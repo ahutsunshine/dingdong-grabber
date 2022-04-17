@@ -26,12 +26,12 @@ func (u *User) LoadConfig() error {
 	if deviceId == "" || cookie == "" || longitude == "" || latitude == "" || uid == "" || userAgent == "" {
 		klog.Fatal("Header请求项deviceId, cookie, longitude, latitude, uid, userAgent为必填项")
 	}
-	u.SetHeaders(deviceId, cookie, longitude, latitude, uid, userAgent)
+	u.SetDefaultHeaders(deviceId, cookie, longitude, latitude, uid, userAgent)
 
 	if sid == "" || deviceToken == "" {
 		klog.Fatal("Body请求项sid, deviceToken为必填项")
 	}
-	u.SetBody(sid, deviceToken)
+	u.SetDefaultBody(sid, deviceToken)
 	if addr, err := u.GetDefaultAddr(); err != nil {
 		return err
 	} else {
@@ -46,7 +46,7 @@ func (u *User) LoadConfig() error {
 	return nil
 }
 
-func (u *User) SetHeaders(deviceId, cookie, longitude, latitude, uid, userAgent string) {
+func (u *User) SetDefaultHeaders(deviceId, cookie, longitude, latitude, uid, userAgent string) {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 
@@ -77,13 +77,23 @@ func (u *User) SetHeaders(deviceId, cookie, longitude, latitude, uid, userAgent 
 	}
 }
 
+// SetHeaders 设置header参数，避免header因多并发引起的concurrent map writes
+func (u *User) SetHeaders(headers map[string]string) {
+	u.mtx.RLock()
+	defer u.mtx.RUnlock()
+	for k, v := range headers {
+		u.headers[k] = v
+	}
+}
+
 func (u *User) Headers() map[string]string {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 	return u.headers
 }
 
-func (u *User) SetBody(sid, deviceToken string) {
+// SetDefaultBody 设置默认的用户初始化数据
+func (u *User) SetDefaultBody(sid, deviceToken string) {
 	var headers = u.Headers()
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
@@ -107,6 +117,15 @@ func (u *User) SetBody(sid, deviceToken string) {
 		"app_client_id": []string{"4"},
 		"sharer_uid":    []string{""},
 		"h5_source":     []string{""},
+	}
+}
+
+// SetBody 设置body参数，避免body因多并发引起的concurrent map writes
+func (u *User) SetBody(body map[string]string) {
+	u.mtx.RLock()
+	defer u.mtx.RUnlock()
+	for k, v := range body {
+		u.body[k] = []string{v}
 	}
 }
 

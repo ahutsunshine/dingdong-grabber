@@ -25,6 +25,18 @@ func NewDefaultUser() *User {
 	}
 }
 
+func (u *User) AddressId() string {
+	u.mtx.RLock()
+	defer u.mtx.RUnlock()
+	return u.addressId
+}
+
+func (u *User) SetAddressId(addressId string) {
+	u.mtx.RLock()
+	defer u.mtx.RUnlock()
+	u.addressId = addressId
+}
+
 func (u *User) SetClient(url string) {
 	u.mtx.Lock()
 	defer u.mtx.Unlock()
@@ -83,7 +95,7 @@ func (u *User) GetDefaultAddr() (*Address, error) {
 	for _, addr := range ads.ValidAddress {
 		if addr.IsDefault {
 			klog.Infof("1.默认收货地址：%s%s%s, 手机号: %s", addr.Location.Address, addr.Location.Name, addr.AddrDetail, addr.Mobile)
-			klog.Infof("2.该地址对应站点名称为：%s", addr.StationName)
+			klog.Infof("2.该地址对应站点名称为：%s", addr.StationInfo.Name)
 			return &addr, nil
 		}
 	}

@@ -35,6 +35,8 @@ func (u *User) LoadConfig() error {
 	if addr, err := u.GetDefaultAddr(); err != nil {
 		return err
 	} else {
+		// 设置收货地址ID
+		u.SetAddressId(addr.Id)
 		// 设置收货站ID
 		u.SetStationId(addr.StationId)
 		// 设置城市编码

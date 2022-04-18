@@ -8,16 +8,18 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 
 	"k8s.io/klog"
 )
 
 type Client struct {
 	Url string
+	mtx sync.RWMutex
 }
 
 type Response struct {
-	Success *bool       `json:"success"`
+	Success bool        `json:"success"`
 	Error   *string     `json:"error"`
 	Code    interface{} `json:"code"` // int or string
 	Message string      `json:"message"`
@@ -62,27 +64,37 @@ func decode(req *http.Request, headers map[string]string) (rsp *Response, err er
 }
 
 func (c *Client) requestForm(method string, headers map[string]string, params url.Values) (*Response, error) {
-	req, err := http.NewRequest(method, c.Url, strings.NewReader(params.Encode()))
+	encode := c.ParamsEncode(params)
+	req, err := http.NewRequest(method, c.Url, strings.NewReader(encode))
 	if err != nil {
 		return nil, err
 	}
 	return decode(req, headers)
 }
 
+// ParamsEncode 为了避免多并发造成的并发读写问题: fatal error: concurrent map read and map write
+func (c *Client) ParamsEncode(params url.Values) string {
+	c.mtx.Lock()
+	defer c.mtx.Unlock()
+	return params.Encode()
+}
+
+// checkSuccess 检查返回结果是否出现错误
 func checkSuccess(resp *Response) (*Response, error) {
-	if resp.Success == nil || !*resp.Success {
-		if resp.Error != nil {
-			return nil, errors.New(*resp.Error)
-		}
-		if resp.Message != "" {
-			return nil, errors.New(resp.Message)
-		}
-		if resp.Msg != "" {
-			return nil, errors.New(resp.Msg)
-		}
-		return nil, fmt.Errorf("%v", resp.Code)
+	// 如果存在success并且为true，则请求成功
+	if resp.Success {
+		return resp, nil
 	}
-	return resp, nil
+	if resp.Error != nil {
+		return nil, errors.New(*resp.Error)
+	}
+	if resp.Message != "" {
+		return nil, errors.New(resp.Message)
+	}
+	if resp.Msg != "" {
+		return nil, errors.New(resp.Msg)
+	}
+	return nil, fmt.Errorf("%v", resp.Code)
 }
 
 func (c *Client) Get(headers map[string]string, params url.Values) (*Response, error) {

@@ -42,9 +42,6 @@ func TestOrder(t *testing.T) {
 	if err != nil {
 		return
 	}
-	//if reservedTimes == nil {
-	//	reservedTimes = make(map[string]interface{})
-	//}
 	o.SetReservedTime(reservedTimes)
 
 	// 5. 确认订单信息

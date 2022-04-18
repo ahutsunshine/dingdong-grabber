@@ -53,8 +53,8 @@ type Time struct {
 type TimeDetail struct {
 	DisableType    int    `json:"disableType"`
 	DisableMsg     string `json:"disableMsg"`
-	StartTimestamp int    `json:"start_timestamp"`
-	EndTimestamp   int    `json:"end_timestamp"`
+	StartTimestamp int64    `json:"start_timestamp"`
+	EndTimestamp   int64    `json:"end_timestamp"`
 	SelectMsg      string `json:"select_msg"`
 }
 

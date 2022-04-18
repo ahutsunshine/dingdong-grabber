@@ -21,5 +21,13 @@
    ![](../images/stream/搜索.jpg)
 
 6. 即可找到对应的请求地址，点击进去详情，在请求信息和请求头部中寻找以下参数
-   
+
+  - 请求信息的`s_id`
+  - 请求信息的`device_token`
+  - 请求头部的`ddmc-device-id`
+  - 请求头部的`Cookie`
+  - 请求头部的`ddmc-uid`
+  - 请求头部的`user-agent`
+
    ![](../images/stream/用户参数.jpg)
+7. 

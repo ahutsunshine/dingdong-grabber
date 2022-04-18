@@ -27,9 +27,9 @@
 
 #### 3. 运行
 ##### IDE直接运行
-填写完用户参数后，直接运行main.go, 默认在5:59:50和08:29:50开始抢菜，长时间运行一定要注意用户登录信息过期
-- 如果没有安装Golang环境，请根据[教程/安装Go环境](../安装Go环境)安装
-- 定时模式: 默认运行定时模式
+可以使用[Goland](https://www.jetbrains.com/go/download/#section=mac) 或者[VS Code](https://code.visualstudio.com/download) 等IDE运行。填写完用户参数后，直接运行main.go, 默认在5:59:50和08:29:50开始抢菜，长时间运行一定要注意用户登录信息过期
+- 如果没有安装Golang环境，请根据[教程/安装Go环境](教程/安装Go环境)安装
+- 定时模式: 默认即为定时模式
 - 人工模式: 运行此模式需要在`main.go`取消注释人工模式，并注释定时模式，此模式下程序默认只会跑2分钟，如果仍然没有可配送时间或者无法下单将终止程序。
 ```
 o := order.NewOrder(u, order.ManualStrategy)

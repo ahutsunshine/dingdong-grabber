@@ -43,7 +43,7 @@ func main() {
 	}
 
 	// 2.1 人工模式
-	//o := order.NewOrder(u, order.ManualStrategy)
+	//o := order.NewOrder(user, order.ManualStrategy)
 	//scheduler := strategy.NewManualScheduler(o, defaultBaseThreadSize, defaultSubmitOrderThreadSize, 1000, 2000)
 
 	// 2.2 定时模式

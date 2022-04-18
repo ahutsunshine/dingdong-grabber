@@ -1,0 +1,201 @@
+{
+  "msg": "请求成功",
+  "code": 0,
+  "timestamp": "2022-04-17 23:22:47",
+  "success": true,
+  "data": {
+    "order": {
+      "coupons": null,
+      "freights": [
+        {
+          "freight": {
+            "type": 1,
+            "remark": "",
+            "freight_money": "5.00",
+            "discount_freight_money": "5.00",
+            "freight_real_money": "0.00"
+          },
+          "package_id": 1
+        }
+      ],
+      "default_coupon": {},
+      "default_freight_coupon": {},
+      "usable_coupon_count": 0,
+      "all_coupon_count": 0,
+      "discount_money": "0.00",
+      "total_money": "80.00",
+      "instant_rebate_money": "0.00",
+      "goods_real_money": "80.00",
+      "goods_origin_money": "80.00",
+      "vip_goods_save_money": "0.00",
+      "vip_goods_save_money_note": null,
+      "all_goods_saved_money": "5.00",
+      "all_goods_saved_money_note": "共优惠¥5.00",
+      "invoice_money": "0.00",
+      "vip_money": "0.00",
+      "vip": {},
+      "coupons_money": "0.00",
+      "disable_coupon_note": "",
+      "disable_coupon_img": "",
+      "can_used_point_num": 0,
+      "user_point_num": 0,
+      "can_used_point_money": "0.00",
+      "used_point_num": 0,
+      "used_point_money": "0.00",
+      "freight_money": "5.00",
+      "full_to_off": "39.00",
+      "free_freight_notice": null,
+      "freight_discount_money": "5.00",
+      "freight_real_money": "0.00",
+      "can_used_balance_money": "0.00",
+      "used_balance_money": "0.00",
+      "vip_free_freight": null,
+      "can_use_freight_coupon": false,
+      "show_point": 0,
+      "point_hint": "",
+      "display_total_money": "80.00",
+      "alipay_ticket": null,
+      "default_freight_coupons": [],
+      "can_use_freight_coupon_count": 0,
+      "use_freight_coupon_notice": null,
+      "product_short_order_text": null
+    },
+    "note": [
+      "无接触配送",
+      "保护环境，生鲜食品无需塑料袋隔离",
+      "联系不上时，请放置在XXX处",
+      "不用太急，注意安全"
+    ],
+    "toast": null,
+    "prompt": {
+      "overtime_pay": {
+        "tag": "超时补偿",
+        "describe": "超时10分钟获赔300积分",
+        "help": "http://maicai.api.ddxq.mobi/info/single?alias=timeout_point"
+      },
+      "not_refund_help": {
+        "tag": "无法申请退款",
+        "describe": "订单完成后7天内可申请退款，\\n现已超过7天，如有售后需求，请联系客服。",
+        "help": "",
+        "already_refund": "该商品已经申请过退款了"
+      }
+    },
+    "balance": {
+      "balance": "0.00",
+      "note": null,
+      "set_pay_password": 0,
+      "set_finger_pay_password": 0,
+      "is_success": 1
+    },
+    "special_notice": "",
+    "address_notice": "",
+    "note_placeholder": [
+      "选填，可以告诉我们您的特殊需求",
+      "在这里填写您的备注信息"
+    ],
+    "point_num": 0,
+    "point_must_full": 100,
+    "point_exchange_rate": 100,
+    "freight_notice": "<span style='color: #333; font-size: 14px;'> 1.当前地址订单不满 39.00 元时，需收取 5.00 元配送费</span><br/><span style='color: #333; font-size: 14px;'> 2.不同地址的配送费可能不同，请以APP的实际显示为准</span><br/>\n<span style='color: #333; font-size: 14px;'> 3.每个用户有1次免配送费权益</span><br/><span style='color: #333; font-size: 14px;'> 4.会员每月另有 6 次免配送费权益，每天限1次</span><br/><span style='color: #333; font-size: 14px;'> 5.用户如有免配送券，可使用免配送券抵扣配送费</span><br/><span style='color: #333; font-size: 14px;'> 6.存在多个包裹的情况时，配送费根据每一个包裹单独计算</span>",
+    "unable_notice": "共0 ，满300可用",
+    "point_description": "<b style='color: #333; font-size: 16px;'>使用条件</b><br/>\n<span style='color: #666666; font-size: 16px;'>1. 商品金额大于28元（含）；</span><br/>\n<span style='color: #666666; font-size: 16px;'>2. 积分数量大于300个（含）；</span><br/><br/>\n<b style='color: #333333; font-size: 16px;'>使用规则</b><br/>\n<span style='color: #666666; font-size: 16px;'>1. 使用积分数量为100的整数倍;</span><br/>\n<span style='color: #666666; font-size: 16px;'>2. 每100积分可抵用现金1元;</span>",
+    "is_open_invoice": 0,
+    "is_open_invoice_new": 1,
+    "invoice_note": {
+      "name": "无法开票",
+      "note": {
+        "title": "开票说明",
+        "content": "<b style='color: #333; font-size: 16px;'>为什么不支持开发票？</b><br/><span style='color: #666666; font-size: 16px;'>1. 订单实付金额为0；</span><br/><span style='color: #666666; font-size: 16px;'>2. 使用余额全额支付；</span><br/><span style='color: #666666; font-size: 16px;'>3. 订单内含不支持开发票的商品导致开票金额为0；</span><br/><span style='color: #666666; font-size: 16px;'>4. 因产生退款导致订单金额为0</span>"
+      }
+    },
+    "invoice_note_new": "本单不支持开票",
+    "receipt_title": null,
+    "receipt_notice": null,
+    "receipt_default_selected": null,
+    "receipt_desc": null,
+    "is_alipay_sign": 0,
+    "is_used_alipay_sign": 0,
+    "pay_type": [
+      2,
+      4,
+      40,
+      13
+    ],
+    "default_pay_type": 2,
+    "advice_pay_type": {
+      "2": "推荐"
+    },
+    "pay_type_content": {
+      "2": "",
+      "4": "工行信用卡爱购满30减5",
+      "40": "满10减3  先到先得",
+      "13": ""
+    },
+    "pay_type_alias": {
+      "1": "现金",
+      "2": "支付宝支付",
+      "5": "支付宝WAP",
+      "3": "微信公众号",
+      "4": "微信支付",
+      "10": "第三方",
+      "6": "微信小程序",
+      "11": "关爱通",
+      "12": "百联ok",
+      "15": "日日煮",
+      "13": "花呗",
+      "16": "最福利",
+      "17": "中国银行",
+      "18": "一网通银行卡支付",
+      "19": "招商银行小程序",
+      "25": "支付宝小程序",
+      "21": "农业银行",
+      "20": "索迪斯",
+      "40": "银联支付"
+    },
+    "recommend_pay_type": null,
+    "pay_type_recommend_desc": null,
+    "pay_type_activity_rules": {
+      "2": "",
+      "4": "活动时间：\n2022年4月8日-2022年6月30日\n\n活动对象：\n中国工商银行在中国大陆地区发行的工银信用卡个人卡持卡人\n\n活动内容\n2022年4月8日至2022年6月30日期间每日06:00起，客户在叮咚买菜APP/叮咚买菜微信小程序下单，使用微信支付绑定工商银行信用卡支付时，有机会享受单笔实际支付金额满30元立减5元的优惠活动。同一个用户活动期间最多可参与1次活动。活动期间每活动日名额4400个，先到先得，用完即止。\n\n活动细则\n：1.同一叮咚买菜账户、身份证号、手机号码、设备号，满足任一条件均视为同一用户。\n2.此优惠可与商家及叮咚买菜同期其他活动同时参与（特殊说明除外）。\n3.用户享受立减优惠后发生退款，仅退还用户实际支付金额，且视为已参加活动。 \n4.用户参与本活动所生成的交易订单须在5分钟内完成支付方可享受立减优惠，如生成的订单未能在5分钟内成功支付，订单失效前，用户无法继续享受立减优惠；订单失效后，如仍有优惠名额，用户有机会享受立减优惠。\n5.用户参与次数与交易时间以叮咚买菜系统记录为准。用户是否享受优惠，以收银台展示为准。\n6.关于退货、退款交易：\n1)退款完成时间以系统记录时间为准。\n2)如退货退款，用户活动期内将不再享受当次立减优惠。\n7.活动详询95588。\n通用条款：\n1.本活动商品及服务由活动开展平台提供，有关之责任以及售后服务，由相关平台负责。\n2.参与本活动的用户存在任何利用系统漏洞、外挂软件、插件等手段或工具套取活动奖励、损害活动规则、违背活动公平原则、违背诚信原则的行为的；用户存在恶意注册、利用本次活动优惠进行非法牟利、炒作、套现、转售、虚假交易等行为的，工商银行有权取消该持卡人参与本活动及获得本活动奖励的资格，告知客户并有权取消或收回已发放的活动奖励。\n3.客户出现所持信用卡过期、被停用、管制、持卡人自行取消信用卡、对所欠工行信用卡债务不偿还、违反《中国工商银行牡丹信用卡章程》及相关领用合约等原因导致无法使用工银信用卡支付而无法享受满减优惠的，工行有权不承担责任。",
+      "40":"活动时间：2022年4月1日-2022年4月18日（每天0点起）\n\n活动内容： \n活动期间，用户在叮咚买菜购买商品，通过调起云闪付APP、或使用安卓端银联手机闪付（Samsung Pay、Huawei Pay、Mi Pay、Vivo pay、OPPO pay等）、调起平安口袋银行APP完成支付，可享满10元立减3元优惠。每日名额共计13888个，其中云闪付每日限量9388个，手机闪付每日限量2000个，平安口袋银行APP每日限量2500个，先到先得。同一持卡人每个活动日可享1次优惠，整个活动期间累计可享5次优惠。虚拟类商品不参与本次活动。\n\n活动细则：\n1、符合同一设备、同一注册手机号、同一银行卡预留手机号、同一银行实体卡号、同一身份证号或者同一APP账号等任一条件的，均视为同一用户。用户需使用本人的电子设备、银行卡等亲自参加。\n2、用户支付时，如通过输入银行卡号等信息完成支付的，无法参与优惠活动。\n3、因系统原因，目前小米部分手机型号不支持调起平安口袋银行APP支付，具体以收银台展示为准。\n4、享受优惠的交易如发生退款、撤销等反向交易，则视为用户放弃优惠，退款金额扣除享受的优惠金额后退回至用户原付款卡。该次优惠次数视为已使用。\n5、由于用户电子设备不支持、APP未更新到最新版本、卡片挂失、换卡等自身原因导致无法享受优惠的，该优惠次数后续不予补发。\n6、为使更多的用户享到本活动优惠权益，对使用或涉嫌使用违反活动规则或不正当方式套取银联优惠的用户及其所使用的工具，包括但不限于手机号、银行卡号、APP账号等，中国银联和商户有权不予优惠、追回已发放的优惠,并拒绝其今后参加银联的任何优惠活动。\n7、本次活动所有时间点以中国银联后台系统时间（北京时间）为准。如出现不可抗力或情势变更等情况（如重大灾害事件、受有权机关指令需停止或调整的、系统故障需暂停的、活动中存在违规作弊行为损害消费者权益的），在法律许可的范围内，银联保留调整、暂停和终止本活动的权利，并经公告后生效。\n8、用户参与活动即视为理解并同意本活动细则。优惠不与商户的积分、红包、会员卡等同享，如对商品、活动规则有疑问，请咨询活动商户。\n9、由于网络可能存在迟延，云闪付APP活动展示券上显示的剩余名额仅供参考。",
+      "13": ""
+    },
+    "old_overtime_part_disable": true,
+    "peace_guarantee_parts": [
+      {
+        "type": 1,
+        "title": "超时补偿",
+        "title_icon": "http://img.ddimg.mobi/over-time.png",
+        "title_short_note": "超时10分钟获赔300积分（上海市因疫情管控暂时取消超时补偿积分）",
+        "detail_note": {
+          "title": "超时补偿说明",
+          "content": "<b style='color: #333; font-size: 16px;'>什么是超时积分补偿？</b><br/>\n<span style='color: #666666; font-size: 16px;'>当超过您选择的产品配送截止时间十分钟以上（含10分钟），叮咚买菜将为您提供300积分的补偿，补偿积分于产品送达后3个工作日内到账。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>获得积分如何使用？</b><br/>\n<span style='color: #666666; font-size: 16px;'>超时补偿积分可与其他积分累积使用；积分满300分可在【我的】-【我的积分】页面查看使用；如未使用将会在获得时间的次月起3个月后过期，过期积分将被清空。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>超时补偿有次数限制吗？</b><br/>\n<span style='color: #666666; font-size: 16px;'>每位用户每天最多可获得2次超时补偿。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>其他说明：</b><br/>\n<span style='color: #666666; font-size: 16px;'>1.如您有采取欺骗方式获取补偿积分的行为，叮咚买菜有权自行扣减相应积分，并保留追究您法律责任的权利。</span><br/>\n<span style='color: #666666; font-size: 16px;'>2.叮咚买菜保留对积分活动的解释权。</span><br/><br/>"
+        }
+      },
+      {
+        "type": 2,
+        "title": "缺重退款",
+        "title_icon": "http://img.ddimg.mobi/lose-weight.png",
+        "title_short_note": "分拣时如商品实际重量不足，按缺重比例自动退款",
+        "detail_note": {
+          "title": "缺重退款说明",
+          "content": "<b style='color: #333; font-size: 16px;'>什么是缺重退款？</b><br/>\n<span style='color: #666666; font-size: 16px;'>订单分拣时，如商品的实际称重与规格重量产生误差，将按照缺重比例自动退款差价至您的原支付账户。</span><br/><br/>"
+        }
+      },
+      {
+        "type": 3,
+        "title": "安心退换",
+        "title_icon": "http://img.ddimg.mobi/exchange.png",
+        "title_short_note": "收货后如商品有质量问题，可申请退换货",
+        "detail_note": {
+          "title": "安心退换说明",
+          "content": "<b style='color: #333; font-size: 16px;'>是否支持无理由退换货？</b><br/>\n<span style='color: #666666; font-size: 16px;'>生鲜产品（包括蔬菜水果、鲜蛋肉禽、水产海鲜等）、乳品（鲜奶）因时效性较强，不支持无理由退换货，仅支持质量问题退换货；非生鲜类产品，在未拆封、损坏等不影响二次销售的情况下，支持无理由退换货。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>商品申请退换货时效？</b><br/>\n<span style='color: #666666; font-size: 16px;'>生鲜商品如有质量问题请于收到商品起24小时内提出退换货申请； 非生鲜类商品自顾客收到商品起48小时内，如符合以下条件，我们将提供退换货服务：</span><br/>\n<span style='color: #666666; font-size: 16px;'>1）商品无损坏、无缺少，不影响二次销售；</span><br/>\n<span style='color: #666666; font-size: 16px;'>2）若您购买的商品有赠品，办理退换货时，须同时将赠品全部退回。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>不支持退换货的情形有哪些？</b><br/>\n<span style='color: #666666; font-size: 16px;'>1）参加限时抢购、特价促销的商品，非质量问题不支持退换货；</span><br/>\n<span style='color: #666666; font-size: 16px;'>2）任何因用户保管储藏导致出现质量问题的商品，商品已使用或损坏等影响二次销售的情况，不支持退换货；</span><br/>\n<span style='color: #666666; font-size: 16px;'>3）主张实物与网站图片存在一定色差的，不支持退换货；</span><br/>\n<span style='color: #666666; font-size: 16px;'>4）非叮咚买菜所售卖的商品，不支持退换货；</span><br/>\n<span style='color: #666666; font-size: 16px;'>5）加工类商品、水产类等商品非本身质量问题，不支持退换货。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>是否需要保留原商品？</b><br/>\n<span style='color: #666666; font-size: 16px;'>申请退款后须完整保留好原商品和小票，如需取货我们将在您选择的取货时间内上门取回，如遇特殊情况可能会延迟上门取货；如无需取回我们会发送短信通知您，感谢您的理解与支持。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>是否取货要在原订单地址？</b><br/>\n<span style='color: #666666; font-size: 16px;'>取货是按照您的订单地址上门取货。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>申请退货时是否需要另行支付运费？</b><br/>\n<span style='color: #666666; font-size: 16px;'>叮咚买菜提供免费上门取货服务。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>购买商品时已支付运费在申请退货时是否退还？</b><br/>\n<span style='color: #666666; font-size: 16px;'>若用户仅申请部分退款，运费不退还。</span><br/><br/>\n<b style='color: #333; font-size: 16px;'>如何取消退换货？</b><br/>\n<span style='color: #666666; font-size: 16px;'>如果您申请了退换货后，需要取消，请您联系客服为您处理。</span><br/><br/>"
+        }
+      }
+    ],
+    "activity_send_word": null,
+    "activity_send_words": [],
+    "free_order_discount_detail": null
+  },
+  "exec_time": null
+}

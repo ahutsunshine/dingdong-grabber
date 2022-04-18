@@ -1,0 +1,46 @@
+{
+  "success": true,
+  "code": 0,
+  "msg": "success",
+  "data": [
+    {
+      "closed": true,
+      "station_delay_text": null,
+      "default_select": false,
+      "time": [
+        {
+          "date_str": "今天",
+          "date_str_timestamp": 1650124800,
+          "day": "today",
+          "times": [
+            {
+              "type": 4,
+              "fullFlag": true,
+              "disableType": 1,
+              "disableMsg": "已约满",
+              "textMsg": "已约满",
+              "start_time": "21:00",
+              "end_time": "22:00",
+              "start_timestamp": 1650200400,
+              "end_timestamp": 1650204000,
+              "arrival_time_msg": "21:00-22:00",
+              "arrival_time": false,
+              "select_msg": "今天21:00-22:00"
+            }
+          ],
+          "is_invalid": false,
+          "invalid_prompt": null,
+          "time_full_text_tip": null
+        }
+      ],
+      "station_id": "5cda2044716de103418b456a",
+      "is_new_rules": true,
+      "busy_soon_arrival_text": "",
+      "eta_trace_id": "",
+      "area_level": 1
+    }
+  ],
+  "tradeTag": "success",
+  "server_time": 1650208927,
+  "is_trade": 1
+}

@@ -8,28 +8,20 @@ import (
 	"k8s.io/klog"
 )
 
-var (
-	// --------Header请求必填项-------
-	deviceId  = "osP8I0U_MVm-CgBtnDMdBWB16-gQ" //  请求头部的ddmc-device-id
-	cookie    = "DDXQSESSID=779afd8355dd38994008cd70b93d0163" // 请求头部的Cookie
-	uid       = "611477235be794000133f3ab" // 请求头部的ddmc-uid
-	userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.20(0x18001428) NetType/WIFI Language/zh_CN" // 请求头部的User-Agent
-
-	// -------Body请求必填项----------
-	sid         = "54ece57125b327fe370a3e66db7b354a" // 请求信息的s_id
-	deviceToken = "WHJMrwNw1k/FKPjcOOgRd+ARHDjBJ4zcumZZY909hrTQHxyALdxSlvkVoVwRzcyu1yGtMZyJitHH6ECpmvFnZz8RbSmxIUOBDdCW1tldyDzmauSxIJm5Txg==1487582755342" // 请求信息的device_token
-)
-
-func (u *User) LoadConfig() error {
+func (u *User) LoadConfig(deviceId, cookie, uid, userAgent, sid, deviceToken string) error {
 	if deviceId == "" || cookie == "" || uid == "" || userAgent == "" {
-		klog.Fatal("Header请求项deviceId, cookie, longitude, latitude, uid, userAgent为必填项")
+		klog.Fatal("Header请求项deviceId, cookie, uid, userAgent为必填项")
 	}
-	u.SetDefaultHeaders(deviceId, cookie, uid, userAgent)
-
 	if sid == "" || deviceToken == "" {
 		klog.Fatal("Body请求项sid, deviceToken为必填项")
 	}
+
+	// 设置Header默认请求参数
+	u.SetDefaultHeaders(deviceId, cookie, uid, userAgent)
+
+	// 设置Body默认请求参数
 	u.SetDefaultBody(sid, deviceToken)
+
 	if addr, err := u.GetDefaultAddr(); err != nil {
 		return err
 	} else {

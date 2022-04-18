@@ -6,12 +6,21 @@ import (
 	"github.com/dingdong-grabber/pkg/user"
 )
 
+const (
+	deviceId    = ""
+	cookie      = ""
+	uid         = ""
+	userAgent   = ""
+	sid         = ""
+	deviceToken = ""
+)
+
 func TestOrder(t *testing.T) {
 	//t.Skip("以下为购物流程，便于开发者理解")
 
 	u := user.NewDefaultUser()
 	// 1. 初始化用户必须的参数数据
-	if err := u.LoadConfig(); err != nil {
+	if err := u.LoadConfig(deviceId, cookie, uid, userAgent, sid, deviceToken); err != nil {
 		return
 	}
 

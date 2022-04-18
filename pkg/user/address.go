@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/url"
 	"sync"
 
@@ -96,6 +97,13 @@ func (u *User) GetDefaultAddr() (*Address, error) {
 		if addr.IsDefault {
 			klog.Infof("1.默认收货地址：%s%s%s, 手机号: %s", addr.Location.Address, addr.Location.Name, addr.AddrDetail, addr.Mobile)
 			klog.Infof("2.该地址对应站点名称为：%s", addr.StationInfo.Name)
+			klog.Infof("3.设置买菜地址经度：%v", addr.Location.Location[0])
+			klog.Infof("4.设置买菜地址纬度：%v", addr.Location.Location[1])
+
+			u.SetHeaders(map[string]string{
+				"longitude": fmt.Sprintf("%v", addr.Location.Location[0]),
+				"latitude":  fmt.Sprintf("%v", addr.Location.Location[1]),
+			})
 			return &addr, nil
 		}
 	}

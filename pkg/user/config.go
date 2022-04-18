@@ -10,23 +10,21 @@ import (
 
 var (
 	// --------Header请求必填项-------
-	deviceId  = "osP8I0U_MVm-CgBtnDMdBWB16-gQ"                                                                                                                                                // 设置ID
-	cookie    = "DDXQSESSID=1eaf61bab8ea4c52079a96618698b1a6"                                                                                                                                 // 用户cookie凭证
-	longitude = "121.550668"                                                                                                                                                                  // 定位所在的经度
-	latitude  = "31.199737"                                                                                                                                                                   // 定位所在的维度
-	uid       = "611477235be794000133f3ab"                                                                                                                                                    // 用户 id
-	userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.20(0x18001428) NetType/WIFI Language/zh_CN" // 用户使用的设备
+	deviceId  = "osP8I0U_MVm-CgBtnDMdBWB16-gQ" //  请求头部的ddmc-device-id
+	cookie    = "DDXQSESSID=779afd8355dd38994008cd70b93d0163" // 请求头部的Cookie
+	uid       = "611477235be794000133f3ab" // 请求头部的ddmc-uid
+	userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.20(0x18001428) NetType/WIFI Language/zh_CN" // 请求头部的User-Agent
 
 	// -------Body请求必填项----------
-	sid         = "54ece57125b327fe370a3e66db7b354a"                                                                                                       // sid
-	deviceToken = "WHJMrwNw1k/FKPjcOOgRd+ARHDjBJ4zcumZZY909hrTQHxyALdxSlvkVoVwRzcyu1yGtMZyJitHH6ECpmvFnZz8RbSmxIUOBDdCW1tldyDzmauSxIJm5Txg==1487582755342" //  设备token
+	sid         = "54ece57125b327fe370a3e66db7b354a" // 请求信息的s_id
+	deviceToken = "WHJMrwNw1k/FKPjcOOgRd+ARHDjBJ4zcumZZY909hrTQHxyALdxSlvkVoVwRzcyu1yGtMZyJitHH6ECpmvFnZz8RbSmxIUOBDdCW1tldyDzmauSxIJm5Txg==1487582755342" // 请求信息的device_token
 )
 
 func (u *User) LoadConfig() error {
-	if deviceId == "" || cookie == "" || longitude == "" || latitude == "" || uid == "" || userAgent == "" {
+	if deviceId == "" || cookie == "" || uid == "" || userAgent == "" {
 		klog.Fatal("Header请求项deviceId, cookie, longitude, latitude, uid, userAgent为必填项")
 	}
-	u.SetDefaultHeaders(deviceId, cookie, longitude, latitude, uid, userAgent)
+	u.SetDefaultHeaders(deviceId, cookie, uid, userAgent)
 
 	if sid == "" || deviceToken == "" {
 		klog.Fatal("Body请求项sid, deviceToken为必填项")
@@ -46,7 +44,7 @@ func (u *User) LoadConfig() error {
 	return nil
 }
 
-func (u *User) SetDefaultHeaders(deviceId, cookie, longitude, latitude, uid, userAgent string) {
+func (u *User) SetDefaultHeaders(deviceId, cookie, uid, userAgent string) {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 
@@ -54,8 +52,6 @@ func (u *User) SetDefaultHeaders(deviceId, cookie, longitude, latitude, uid, use
 		// Header必填项
 		"ddmc-device-id": deviceId,
 		"cookie":         cookie,
-		"ddmc-longitude": longitude,
-		"ddmc-latitude":  latitude,
 		"ddmc-uid":       uid,
 		"user-agent":     userAgent,
 

@@ -3,24 +3,22 @@ package user
 import (
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"k8s.io/klog"
 )
 
-func (u *User) LoadConfig(deviceId, cookie, uid, userAgent, sid, deviceToken string) error {
-	if deviceId == "" || cookie == "" || uid == "" || userAgent == "" {
+func (u *User) LoadConfig(cookie, uid string) error {
+	if cookie == "" || uid == "" {
 		klog.Fatal("Header请求项deviceId, cookie, uid, userAgent为必填项")
-	}
-	if sid == "" || deviceToken == "" {
-		klog.Fatal("Body请求项sid, deviceToken为必填项")
 	}
 
 	// 设置Header默认请求参数
-	u.SetDefaultHeaders(deviceId, cookie, uid, userAgent)
+	u.SetDefaultHeaders(cookie, uid)
 
 	// 设置Body默认请求参数
-	u.SetDefaultBody(sid, deviceToken)
+	u.SetDefaultBody()
 
 	if addr, err := u.GetDefaultAddr(); err != nil {
 		return err
@@ -36,16 +34,18 @@ func (u *User) LoadConfig(deviceId, cookie, uid, userAgent, sid, deviceToken str
 	return nil
 }
 
-func (u *User) SetDefaultHeaders(deviceId, cookie, uid, userAgent string) {
+func (u *User) SetDefaultHeaders(cookie, uid string) {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
-
+	if !strings.HasPrefix(cookie, "DDXQSESSID") {
+		cookie = fmt.Sprintf("DDXQSESSID=%s", cookie)
+	}
 	u.headers = map[string]string{
 		// Header必填项
-		"ddmc-device-id": deviceId,
+		"ddmc-device-id": "",
 		"cookie":         cookie,
 		"ddmc-uid":       uid,
-		"user-agent":     userAgent,
+		"user-agent":     "",
 
 		// 下面作为小程序2.83.0版本的默认值
 		"ddmc-build-version": "2.83.0",
@@ -81,14 +81,14 @@ func (u *User) Headers() map[string]string {
 }
 
 // SetDefaultBody 设置默认的用户初始化数据
-func (u *User) SetDefaultBody(sid, deviceToken string) {
+func (u *User) SetDefaultBody() {
 	var headers = u.Headers()
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 	u.body = url.Values{
 		// Body必填项
-		"s_id":         []string{sid},
-		"device_token": []string{deviceToken},
+		"s_id":         []string{""},
+		"device_token": []string{""},
 
 		// 下面作为小程序2.83.0版本的默认值
 		"uid":           []string{headers["ddmc-uid"]},
@@ -110,8 +110,8 @@ func (u *User) SetDefaultBody(sid, deviceToken string) {
 
 // SetBody 设置body参数，避免body因多并发引起的concurrent map writes
 func (u *User) SetBody(body map[string]string) {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
 	for k, v := range body {
 		u.body[k] = []string{v}
 	}

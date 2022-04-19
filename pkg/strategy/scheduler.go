@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	"k8s.io/klog"
@@ -30,7 +31,7 @@ func (s *Scheduler) Run(ctx context.Context) {
 	go func() {
 		var (
 			deadline = time.After(120 * time.Second)
-			ticker   = time.NewTicker(time.Second)
+			ticker   = time.NewTicker(3 * time.Second)
 		)
 		defer ticker.Stop()
 		for {
@@ -43,6 +44,9 @@ func (s *Scheduler) Run(ctx context.Context) {
 				if s.o.Stop() {
 					klog.Info("下单流程已完成，主动结束守护线程")
 					return
+				}
+				if _, err := s.o.User().GetDefaultAddr(); err != nil && strings.Contains(err.Error(), "已过期") {
+					klog.Fatal("用户Cookie已过期，请重新填写")
 				}
 			case <-ctx.Done():
 				return

@@ -11,7 +11,7 @@ import (
 
 func (u *User) LoadConfig(cookie, uid string) error {
 	if cookie == "" || uid == "" {
-		klog.Fatal("Header请求项deviceId, cookie, uid, userAgent为必填项")
+		klog.Fatal("Header请求项cookie, uid为必填项")
 	}
 
 	// 设置Header默认请求参数

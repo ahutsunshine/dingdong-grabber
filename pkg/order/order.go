@@ -37,6 +37,12 @@ func NewOrder(user *user.User, strategy Strategy) *Order {
 	}
 }
 
+func (o *Order) User() *user.User {
+	o.mtx.RLock()
+	defer o.mtx.RUnlock()
+	return o.user
+}
+
 func (o *Order) SetStop(stop bool) {
 	o.mtx.Lock()
 	defer o.mtx.Unlock()

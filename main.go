@@ -6,6 +6,7 @@ import (
 
 	schedule "github.com/dingdong-grabber/pkg/strategy"
 	"github.com/dingdong-grabber/pkg/user"
+	"k8s.io/klog"
 )
 
 const (
@@ -53,7 +54,9 @@ func main() {
 	scheduler := factory.Build(strategy, user, defaultBaseThreadSize, defaultSubmitOrderThreadSize, 300, 500, []string{"50 59 05 * * ?", "50 29 08 * * ?"})
 
 	// 3. 运行调度策略抢菜
-	_ = scheduler.Schedule(context.TODO())
+	if err := scheduler.Schedule(context.TODO()); err != nil {
+		klog.Fatal(err)
+	}
 
 	select {}
 }

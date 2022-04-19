@@ -10,10 +10,6 @@ type ManualScheduler struct {
 	Scheduler `json:",inline"`
 }
 
-func NewDefaultManualScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize int) Interface {
-	return NewManualScheduler(o, baseTheadSize, submitOrderTheadSize, DefaultMinSleepMillis, DefaultMaxSleepMillis)
-}
-
 func NewManualScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int) Interface {
 	if minSleepMillis > maxSleepMillis {
 		maxSleepMillis = minSleepMillis

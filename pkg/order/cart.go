@@ -16,7 +16,7 @@ func (o *Order) CheckAll() error {
 	})
 
 	o.user.SetClient(constants.CartCheck)
-	if _, err := o.user.Client().Get(o.user.Headers(), o.user.Body()); err != nil {
+	if _, err := o.user.Client().Get(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy()); err != nil {
 		klog.Infof("勾选购物车全选按钮失败, 错误: %v", err)
 		return err
 	}
@@ -33,7 +33,7 @@ func (o *Order) GetCart() (map[string]interface{}, error) {
 	})
 
 	o.user.SetClient(constants.Cart)
-	resp, err := o.user.Client().Get(o.user.Headers(), o.user.Body())
+	resp, err := o.user.Client().Get(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
 	if err != nil {
 		klog.Errorf("获取购物车商品失败, 错误: %v", err)
 		return nil, err

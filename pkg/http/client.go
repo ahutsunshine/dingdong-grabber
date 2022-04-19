@@ -33,7 +33,7 @@ func (c *Client) request(method string, headers map[string]string, params url.Va
 		return nil, err
 	}
 	if len(params) > 0 {
-		req.URL.RawQuery = c.ParamsEncode(params)
+		req.URL.RawQuery = params.Encode()
 	}
 	return decode(req, headers)
 }
@@ -64,19 +64,11 @@ func decode(req *http.Request, headers map[string]string) (rsp *Response, err er
 }
 
 func (c *Client) requestForm(method string, headers map[string]string, params url.Values) (*Response, error) {
-	encode := c.ParamsEncode(params)
-	req, err := http.NewRequest(method, c.Url, strings.NewReader(encode))
+	req, err := http.NewRequest(method, c.Url, strings.NewReader(params.Encode()))
 	if err != nil {
 		return nil, err
 	}
 	return decode(req, headers)
-}
-
-// ParamsEncode 为了避免多并发造成的并发读写问题: fatal error: concurrent map read and map write
-func (c *Client) ParamsEncode(params url.Values) string {
-	c.mtx.Lock()
-	defer c.mtx.Unlock()
-	return params.Encode()
 }
 
 // checkSuccess 检查返回结果是否出现错误
@@ -86,14 +78,28 @@ func checkSuccess(resp *Response) (*Response, error) {
 		return resp, nil
 	}
 	if resp.Error != nil {
+		if strings.Contains(*resp.Error, "提交订单失败") {
+			bytes, _ := json.Marshal(resp)
+			klog.Info(string(bytes))
+		}
 		return nil, errors.New(*resp.Error)
 	}
 	if resp.Message != "" {
+		if strings.Contains(resp.Message, "提交订单失败") {
+			bytes, _ := json.Marshal(resp)
+			klog.Info(string(bytes))
+		}
 		return nil, errors.New(resp.Message)
 	}
 	if resp.Msg != "" {
+		if strings.Contains(resp.Msg, "提交订单失败") {
+			bytes, _ := json.Marshal(resp)
+			klog.Info(string(bytes))
+		}
 		return nil, errors.New(resp.Msg)
 	}
+	bytes, _ := json.Marshal(resp)
+	klog.Info(string(bytes))
 	return nil, fmt.Errorf("%v", resp.Code)
 }
 

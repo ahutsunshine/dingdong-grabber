@@ -80,6 +80,18 @@ func (u *User) Headers() map[string]string {
 	return u.headers
 }
 
+// HeadersDeepCopy 为了避免多并发造成的并发读写问题: fatal error: concurrent map read and map write
+func (u *User) HeadersDeepCopy() map[string]string {
+	var headers = u.Headers()
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
+	var cp = make(map[string]string)
+	for k, v := range headers {
+		cp[k] = v
+	}
+	return cp
+}
+
 // SetDefaultBody 设置默认的用户初始化数据
 func (u *User) SetDefaultBody() {
 	var headers = u.Headers()
@@ -121,4 +133,16 @@ func (u *User) Body() url.Values {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 	return u.body
+}
+
+// BodyDeepCopy 为了避免多并发造成的并发读写问题: fatal error: concurrent map read and map write
+func (u *User) BodyDeepCopy() url.Values {
+	var body = u.Body()
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
+	var cp = make(url.Values)
+	for k, v := range body {
+		cp[k] = v
+	}
+	return cp
 }

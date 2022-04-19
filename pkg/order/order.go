@@ -103,7 +103,7 @@ func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 	})
 
 	o.user.SetClient(constants.ReserveTime)
-	resp, err := o.user.Client().Post(o.user.Headers(), o.user.Body())
+	resp, err := o.user.Client().Post(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
 	if err != nil {
 		klog.Errorf("获取预约时间失败, 错误: %v", err)
 		return nil, err
@@ -200,7 +200,7 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 	})
 
 	o.user.SetClient(constants.CheckOrder)
-	resp, err := o.user.Client().Post(o.user.Headers(), o.user.Body())
+	resp, err := o.user.Client().Post(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
 	if err != nil {
 		klog.Errorf("获取订单确认信息失败, 错误: %s", err.Error())
 		return nil, err
@@ -295,7 +295,7 @@ func (o *Order) SubmitOrder() (bool, error) {
 	})
 
 	o.user.SetClient(constants.SubmitOrder)
-	_, err := o.user.Client().Post(o.user.Headers(), o.user.Body())
+	_, err := o.user.Client().Post(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
 	if err != nil {
 		klog.Errorf("提交订单失败, 错误: %s 当前下单总金额：%v", err, cart["total_money"])
 		return false, err

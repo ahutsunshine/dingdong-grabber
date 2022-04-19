@@ -11,6 +11,8 @@ GOPACKAGES       := $(shell $(GO) list ./...)
 GOIMPORTS_REPO   := golang.org/x/tools/cmd/goimports
 GOIMPORTS        := $(GOPATH)/bin/goimports
 
+DOCKER_IMAGE ?= ahutsunshine/dingdong-grapper:latest
+
 .PHONY: fmt
 fmt: ## Ensures all go files are properly formatted.
 	@echo "Formatting..."
@@ -48,3 +50,11 @@ coverage: ## Runs tests with coverage.
 clean:
 	@rm -rf ${BUILD_DIR}
 
+.PHONY: docker-image
+docker-image:
+	@DOCKER_BUILDKIT=1 docker build --ssh default --target image -t "${DOCKER_IMAGE}" .
+
+.PHONY: docker-push
+docker-push: docker-image
+docker-push:
+	docker push ${DOCKER_IMAGE}

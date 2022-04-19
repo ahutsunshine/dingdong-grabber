@@ -75,7 +75,7 @@ func (u *User) SetCityNumber(cityNumber string) {
 // GetDefaultAddr 获取默认地址 设置配送地址id，必须保证默认收获地址在上海且填写正确作为收获地址，请注意输出信息并确认
 func (u *User) GetDefaultAddr() (*Address, error) {
 	u.SetClient(constants.Address)
-	resp, err := u.Client().Get(u.Headers(), u.Body())
+	resp, err := u.Client().Get(u.HeadersDeepCopy(), u.BodyDeepCopy())
 	if err != nil {
 		klog.Info(err.Error())
 		return nil, err

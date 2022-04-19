@@ -80,7 +80,7 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 				money, err := strconv.ParseFloat(cart["total_money"].(string), 64)
 				if err != nil {
 					klog.Errorf("转换购买金额出错，错误: %v", err)
-					// 如果转换出错仍然直接下订单避，最大可能避免无订单问题
+					// 如果转换出错仍然直接下订单，最大可能避免无订单问题
 					s.o.SetCart(cart)
 					return
 				}

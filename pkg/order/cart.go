@@ -48,7 +48,7 @@ func (o *Order) GetCart() (map[string]interface{}, error) {
 
 	if len(cart.NewOrderProductList) == 0 {
 		klog.Info("购物车无可购买的商品")
-		// 人工模式无可购买的商品则停止抢购
+		// 人工策略无可购买的商品则停止抢购
 		if o.strategy == ManualStrategy {
 			o.SetStop(true)
 		}

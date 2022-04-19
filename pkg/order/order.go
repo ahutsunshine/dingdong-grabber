@@ -13,17 +13,16 @@ import (
 	"k8s.io/klog"
 )
 
-type Strategy string
+type Strategy int
 
 const (
-	ManualStrategy   Strategy = "manual"   // 人工
-	TimingStrategy   Strategy = "timing"   // 定时
-	SentinelStrategy Strategy = "sentinel" // 哨兵捡漏模式, 可长时间运行
+	ManualStrategy Strategy = 0 // 人工
+	TimingStrategy Strategy = 1 // 定时
 )
 
 type Order struct {
 	user         *user.User // 订单所属用户
-	stop         bool       // 保护线程: 2分钟未下单自动终止,避免对叮咚服务器造成压力,也避免封号. 如果想长时间执行,请使用Sentinel哨兵模式
+	stop         bool       // 保护线程: 2分钟未下单自动终止,避免对叮咚服务器造成压力,也避免封号
 	strategy     Strategy   // 不同策略抢购
 	cart         map[string]interface{}
 	reservedTime map[string]interface{}

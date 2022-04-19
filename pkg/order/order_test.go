@@ -7,12 +7,8 @@ import (
 )
 
 const (
-	deviceId    = ""
-	cookie      = ""
-	uid         = ""
-	userAgent   = ""
-	sid         = ""
-	deviceToken = ""
+	cookie = ""
+	uid    = ""
 )
 
 func TestOrder(t *testing.T) {
@@ -20,7 +16,7 @@ func TestOrder(t *testing.T) {
 
 	u := user.NewDefaultUser()
 	// 1. 初始化用户必须的参数数据
-	if err := u.LoadConfig(deviceId, cookie, uid, userAgent, sid, deviceToken); err != nil {
+	if err := u.LoadConfig(cookie, uid); err != nil {
 		return
 	}
 

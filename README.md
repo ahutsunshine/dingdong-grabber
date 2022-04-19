@@ -24,12 +24,8 @@
 
 ## 2. 填写用户参数
 
-- 请求信息的`s_id`：填入`main.go` sid参数中
-- 请求信息的`device_token`：填入`main.go` deviceToken参数中
-- 请求头部的`ddmc-device-id`：填入`main.go` deviceId参数中
 - 请求头部的`Cookie`：填入`main.go` cookie参数中
 - 请求头部的`ddmc-uid`：填入`main.go` uid参数中
-- 请求头部的`user-agent`：填入`main.go` userAgent参数中
 
 ## 3. 运行
 

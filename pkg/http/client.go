@@ -33,7 +33,7 @@ func (c *Client) request(method string, headers map[string]string, params url.Va
 		return nil, err
 	}
 	if len(params) > 0 {
-		req.URL.RawQuery = params.Encode()
+		req.URL.RawQuery = c.ParamsEncode(params)
 	}
 	return decode(req, headers)
 }

@@ -2,6 +2,7 @@ package strategy
 
 import (
 	"context"
+	"encoding/json"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -25,7 +26,7 @@ type Scheduler struct {
 func (s *Scheduler) Run(ctx context.Context) {
 	go func() {
 		var (
-			deadline = time.After(120 * time.Second)
+			deadline = time.After(3 * time.Hour)
 			ticker   = time.NewTicker(3 * time.Second)
 		)
 		defer ticker.Stop()
@@ -64,8 +65,8 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
-				// 购物车选中后，可能以后并不需要再次选中(但不确定背后逻辑，再每隔3-5秒选中一次)
-				time.Sleep(time.Duration(rand.Intn(3)+3) * time.Millisecond)
+				// 购物车选中后，可能以后并不需要再次选中(但不确定背后逻辑，再每隔1-3秒选中一次)
+				time.Sleep(time.Duration(rand.Intn(3)+1) * time.Second)
 			}
 		}()
 
@@ -77,7 +78,12 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 					continue
 				}
 				if cart["total_money"] == nil {
-					klog.Errorf("获取购物总金额出错，购物车无总金额参数")
+					bytes, err := json.Marshal(cart)
+					if err != nil {
+						klog.Errorf("解析购物车信息出错, 错误: %v", err)
+					} else {
+						klog.Infof("获取购物总金额出错，购物车无总金额参数, 详情: %s", string(bytes))
+					}
 					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}

@@ -19,7 +19,7 @@ type Client struct {
 }
 
 type Response struct {
-	Success bool        `json:"success"`
+	Success *bool       `json:"success"`
 	Error   *string     `json:"error"`
 	Code    interface{} `json:"code"` // int or string
 	Message string      `json:"message"`
@@ -77,10 +77,17 @@ func (c *Client) requestForm(method string, headers map[string]string, params ur
 
 // checkSuccess 检查返回结果是否出现错误
 func checkSuccess(resp *Response) (*Response, error) {
-	// 如果存在success并且为true，则请求成功
-	if resp.Success {
+	// 响应结果存在success字段, 且为true，则请求成功
+	if resp.Success != nil && *resp.Success {
 		return resp, nil
 	}
+
+	bytes, err := json.Marshal(resp)
+	if err != nil {
+		klog.Error(err)
+	}
+	klog.Infof("请求结果有异常, 详情: %s", string(bytes))
+
 	if resp.Error != nil {
 		return nil, errors.New(*resp.Error)
 	}

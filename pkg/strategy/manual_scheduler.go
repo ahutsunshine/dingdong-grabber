@@ -6,6 +6,7 @@ import (
 	"github.com/dingdong-grabber/pkg/order"
 )
 
+// ManualScheduler 人工策略调度器
 type ManualScheduler struct {
 	Scheduler `json:",inline"`
 }

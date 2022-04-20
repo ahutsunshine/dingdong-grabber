@@ -9,6 +9,7 @@ import (
 	"k8s.io/klog"
 )
 
+// TimingScheduler 定时策略调度器
 type TimingScheduler struct {
 	Scheduler `json:",inline"`
 	crons     []string // cron job 调度时间

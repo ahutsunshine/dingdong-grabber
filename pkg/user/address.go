@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/dingdong-grabber/pkg/constants"
+
 	"github.com/dingdong-grabber/pkg/http"
 	"k8s.io/klog"
 )
@@ -74,6 +75,11 @@ func (u *User) SetCityNumber(cityNumber string) {
 
 // GetDefaultAddr 获取默认地址 设置配送地址id，必须保证默认收获地址在上海且填写正确作为收获地址，请注意输出信息并确认
 func (u *User) GetDefaultAddr() (*Address, error) {
+	// body参数为共享，提交购物车时添加了products参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
+	u.SetBody(map[string]string{
+		"products":      "",
+		"package_order": "",
+	})
 	u.SetClient(constants.Address)
 	resp, err := u.Client().Get(u.HeadersDeepCopy(), u.BodyDeepCopy())
 	if err != nil {

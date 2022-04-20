@@ -57,6 +57,7 @@ func decode(req *http.Request, headers map[string]string) (rsp *Response, err er
 	}
 
 	if resp.StatusCode == http.StatusRequestURITooLong {
+		klog.Info(req.URL.RawQuery)
 		return nil, errors.New("请求参数过长")
 	}
 

@@ -13,7 +13,10 @@ func (o *Order) CheckAll() error {
 	o.user.SetBody(map[string]string{
 		"is_check": "1",
 		"is_load":  "1",
-		"products": "", // body参数为共享，提交购物车时添加了products参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
+
+		// body参数为共享，提交购物车时添加了products参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
+		"products":      "",
+		"package_order": "",
 	})
 
 	o.user.SetClient(constants.CartCheck)
@@ -31,7 +34,10 @@ func (o *Order) GetCart() (map[string]interface{}, error) {
 	o.user.SetBody(map[string]string{
 		"is_load":   "1",                                                       // 关键参数，必须要带
 		"ab_config": "{\"key_onion\":\"D\",\"key_cart_discount_price\":\"C\"}", // 可选参数
-		"products":  "",                                                        // body参数为共享，提交购物车时添加了products参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
+
+		// body参数为共享，提交购物车时添加了products参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
+		"products":      "",
+		"package_order": "",
 	})
 
 	o.user.SetClient(constants.Cart)

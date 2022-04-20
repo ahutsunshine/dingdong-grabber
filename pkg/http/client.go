@@ -56,6 +56,10 @@ func decode(req *http.Request, headers map[string]string) (rsp *Response, err er
 		return nil, err
 	}
 
+	if resp.StatusCode == http.StatusRequestURITooLong {
+		return nil, errors.New("请求参数过长")
+	}
+
 	if err = json.NewDecoder(resp.Body).Decode(&rsp); err != nil {
 		klog.Error(err)
 		return nil, err
@@ -78,28 +82,14 @@ func checkSuccess(resp *Response) (*Response, error) {
 		return resp, nil
 	}
 	if resp.Error != nil {
-		if strings.Contains(*resp.Error, "提交订单失败") {
-			bytes, _ := json.Marshal(resp)
-			klog.Info(string(bytes))
-		}
 		return nil, errors.New(*resp.Error)
 	}
 	if resp.Message != "" {
-		if strings.Contains(resp.Message, "提交订单失败") {
-			bytes, _ := json.Marshal(resp)
-			klog.Info(string(bytes))
-		}
 		return nil, errors.New(resp.Message)
 	}
 	if resp.Msg != "" {
-		if strings.Contains(resp.Msg, "提交订单失败") {
-			bytes, _ := json.Marshal(resp)
-			klog.Info(string(bytes))
-		}
 		return nil, errors.New(resp.Msg)
 	}
-	bytes, _ := json.Marshal(resp)
-	klog.Info(string(bytes))
 	return nil, fmt.Errorf("%v", resp.Code)
 }
 

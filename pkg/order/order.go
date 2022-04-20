@@ -295,12 +295,16 @@ func (o *Order) SubmitOrder() (bool, error) {
 	})
 
 	o.user.SetClient(constants.SubmitOrder)
-	_, err := o.user.Client().Post(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
+	resp, err := o.user.Client().Post(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
 	if err != nil {
 		klog.Errorf("提交订单失败, 错误: %s 当前下单总金额：%v", err, cart["total_money"])
 		return false, err
 	}
-
+	bytes, err := json.Marshal(resp)
+	if err != nil {
+		klog.Errorf("打印下单成功结果出错, 错误:  %v", err)
+	}
+	klog.Infof("下单成功返回的响应信息: %s", string(bytes))
 	klog.Infof("恭喜你，已成功下单，当前下单总金额：%s", cart["total_money"])
 	return true, nil
 }

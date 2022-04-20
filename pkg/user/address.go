@@ -79,6 +79,7 @@ func (u *User) GetDefaultAddr() (*Address, error) {
 	u.SetBody(map[string]string{
 		"products":      "",
 		"package_order": "",
+		"packages":      "",
 	})
 	u.SetClient(constants.Address)
 	resp, err := u.Client().Get(u.HeadersDeepCopy(), u.BodyDeepCopy())

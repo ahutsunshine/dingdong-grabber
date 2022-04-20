@@ -12,11 +12,6 @@ import (
 	"github.com/dingdong-grabber/pkg/order"
 )
 
-const (
-	DefaultMinSleepMillis = 300
-	DefaultMaxSleepMillis = 500
-)
-
 type Scheduler struct {
 	o                    *order.Order
 	minOrderPrice        float64 // 最小订单成交金额
@@ -78,6 +73,11 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 			for !s.o.Stop() {
 				cart, err := s.o.GetCart()
 				if err != nil {
+					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
+					continue
+				}
+				if cart["total_money"] == nil {
+					klog.Errorf("获取购物总金额出错，购物车无总金额参数")
 					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}

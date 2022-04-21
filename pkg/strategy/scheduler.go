@@ -41,7 +41,7 @@ func (s *Scheduler) Run(ctx context.Context) {
 					klog.Info("下单流程已完成，主动结束守护线程")
 					return
 				}
-				if _, err := s.o.User().GetDefaultAddr(); err != nil && strings.Contains(err.Error(), "已过期") {
+				if _, err := s.o.User().GetUserDetail(); err != nil && strings.Contains(err.Error(), "已过期") {
 					klog.Fatal("用户Cookie已过期，请重新填写")
 				}
 			case <-ctx.Done():

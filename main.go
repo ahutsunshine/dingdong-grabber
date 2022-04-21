@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	defaultBaseThreadSize        = 2 // 默认基础信息执行线程数
-	defaultSubmitOrderThreadSize = 4 // 默认提交订单执行线程数
+	defaultBaseThreadSize        = 2   // 默认基础信息执行线程数
+	defaultSubmitOrderThreadSize = 4   // 默认提交订单执行线程数
+	defaultMinSleepMillis        = 300 // 默认抢菜最小时间间隔 300ms
+	defaultMaxSleepMillis        = 500 //  默认抢菜最大时间间隔 500ms
 
 	// 抢菜策略, 0: 人工策略，1: 定时策略, 默认是定时策略
 	// - 人工策略: 程序运行即开始抢菜, 此策略下程序默认只会跑2分钟，如果没有商品库存，则会立即停止
@@ -56,7 +58,7 @@ func main() {
 	// 2. 构建实际调度策略
 	factory := schedule.NewSchedulerFactory()
 	scheduler := factory.Build(strategy, u, defaultBaseThreadSize, defaultSubmitOrderThreadSize,
-		1000, 1500, []string{"50 59 05 * * ?", "50 29 08 * * ?"}, play)
+		defaultMinSleepMillis, defaultMaxSleepMillis, []string{"50 59 05 * * ?", "50 29 08 * * ?"}, play)
 
 	// 3. 运行调度策略抢菜
 	if err := scheduler.Schedule(context.TODO()); err != nil {

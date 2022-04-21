@@ -4,78 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
-	"sync"
 
 	"github.com/dingdong-grabber/pkg/constants"
-
-	"github.com/dingdong-grabber/pkg/http"
 	"k8s.io/klog"
 )
 
-type User struct {
-	c         *http.Client
-	addressId string
-	headers   map[string]string
-	body      url.Values
-	mtx       sync.RWMutex
-}
-
-func NewDefaultUser() *User {
-	return &User{
-		c: &http.Client{},
-	}
-}
-
-func (u *User) AddressId() string {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
-	return u.addressId
-}
-
-func (u *User) SetAddressId(addressId string) {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
-	u.addressId = addressId
-}
-
-func (u *User) SetClient(url string) {
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
-	u.c.Url = url
-}
-
-func (u *User) Client() *http.Client {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
-	return u.c
-}
-
-func (u *User) SetStationId(stationId string) {
-	var (
-		headers = u.Headers()
-		body    = u.Body()
-	)
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
-	headers["ddmc-station-id"] = stationId
-	body["station_id"] = []string{stationId}
-}
-
-func (u *User) SetCityNumber(cityNumber string) {
-	var (
-		headers = u.Headers()
-		body    = u.Body()
-	)
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
-	headers["ddmc-city-number"] = cityNumber
-	body["city_number"] = []string{cityNumber}
-}
-
 // GetDefaultAddr 获取默认地址 设置配送地址id，必须保证默认收获地址在上海且填写正确作为收获地址，请注意输出信息并确认
 func (u *User) GetDefaultAddr() (*Address, error) {
-	// body参数为共享，提交购物车时添加了products参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
+	// body参数为共享，提交购物车时添加了products等参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
 	u.SetBody(map[string]string{
 		"products":      "",
 		"package_order": "",

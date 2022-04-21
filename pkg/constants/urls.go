@@ -1,6 +1,7 @@
 package constants
 
 const (
+	UserDetail  = "https://sunquan.api.ddxq.mobi/api/v1/user/detail/"
 	Address     = "https://sunquan.api.ddxq.mobi/api/v1/user/address/"     // 获取用户默认地址， 此地址会作为买菜地址
 	CartCheck   = "https://maicai.api.ddxq.mobi/cart/allCheck"             // 勾选购物车所有商品地址
 	Cart        = "https://maicai.api.ddxq.mobi/cart/index"                // 获取购物车商品地址

@@ -26,32 +26,30 @@ const (
 	// 50 29 08  * *  *
 	strategy = 1
 
-	// 当前仅需填写此两项参数，参数优化不断进行 中
+	// 必须填写用户cookie， cookie代表人的身份
 	cookie = "" // 请求头部的Cookie
-	uid    = "" // 请求头部的ddmc-uid
 )
 
 var (
-	c, u string
-	sy   int
+	c  string
+	sy int
 )
 
 // 应用小程序版本：2.83.0
 func main() {
 	flag.StringVar(&c, "cookie", "", "请求头部的Cookie")
-	flag.StringVar(&u, "uid", "", "请求头部的ddmc-uid")
 	flag.IntVar(&sy, "strategy", 1, "设置抢菜策略")
 	setDefault()
 
 	// 1. 初始化用户必须的参数数据
 	user := user.NewDefaultUser()
-	if err := user.LoadConfig(c, u); err != nil {
+	if err := user.LoadConfig(c); err != nil {
 		return
 	}
 
 	// 2. 构建实际调度策略
 	factory := schedule.NewSchedulerFactory()
-	scheduler := factory.Build(strategy, user, defaultBaseThreadSize, defaultSubmitOrderThreadSize, 300, 500, []string{"50 59 05 * * ?", "50 29 08 * * ?"})
+	scheduler := factory.Build(strategy, user, defaultBaseThreadSize, defaultSubmitOrderThreadSize, 1000, 1500, []string{"50 59 05 * * ?", "50 29 08 * * ?"})
 
 	// 3. 运行调度策略抢菜
 	if err := scheduler.Schedule(context.TODO()); err != nil {
@@ -65,8 +63,5 @@ func main() {
 func setDefault() {
 	if c == "" {
 		c = cookie
-	}
-	if u == "" {
-		u = uid
 	}
 }

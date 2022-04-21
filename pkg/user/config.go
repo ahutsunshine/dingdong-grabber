@@ -1,40 +1,135 @@
 package user
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/dingdong-grabber/pkg/constants"
+	"github.com/dingdong-grabber/pkg/http"
 	"k8s.io/klog"
 )
 
-func (u *User) LoadConfig(cookie, uid string) error {
-	if cookie == "" || uid == "" {
-		klog.Fatal("Header请求项cookie, uid为必填项")
+type User struct {
+	c          *http.Client
+	userDetail *UserDetail
+	addressId  string
+	headers    map[string]string
+	body       url.Values
+	mtx        sync.RWMutex
+}
+
+func NewDefaultUser() *User {
+	return &User{
+		c: &http.Client{},
+	}
+}
+
+func (u *User) SetUserDetail(userDetail *UserDetail) {
+	u.mtx.RLock()
+	defer u.mtx.RUnlock()
+	u.userDetail = userDetail
+}
+
+func (u *User) UserDetail() *UserDetail {
+	u.mtx.RLock()
+	defer u.mtx.RUnlock()
+	return u.userDetail
+}
+
+func (u *User) AddressId() string {
+	u.mtx.RLock()
+	defer u.mtx.RUnlock()
+	return u.addressId
+}
+
+func (u *User) SetAddressId(addressId string) {
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
+	u.addressId = addressId
+}
+
+func (u *User) SetClient(url string) {
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
+	u.c.Url = url
+}
+
+func (u *User) Client() *http.Client {
+	u.mtx.RLock()
+	defer u.mtx.RUnlock()
+	return u.c
+}
+
+func (u *User) SetStationId(stationId string) {
+	var (
+		headers = u.Headers()
+		body    = u.Body()
+	)
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
+	headers["ddmc-station-id"] = stationId
+	body["station_id"] = []string{stationId}
+}
+
+func (u *User) SetCityNumber(cityNumber string) {
+	var (
+		headers = u.Headers()
+		body    = u.Body()
+	)
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
+	headers["ddmc-city-number"] = cityNumber
+	body["city_number"] = []string{cityNumber}
+}
+
+func (u *User) LoadConfig(cookie string) error {
+	if cookie == "" {
+		klog.Fatal("请求头cookie为必填项")
 	}
 
 	// 设置Header默认请求参数
-	u.SetDefaultHeaders(cookie, uid)
+	u.SetDefaultHeaders(cookie)
 
 	// 设置Body默认请求参数
 	u.SetDefaultBody()
 
-	if addr, err := u.GetDefaultAddr(); err != nil {
+	addr, err := u.GetDefaultAddr()
+	if err != nil {
 		return err
-	} else {
-		// 设置收货地址ID
-		u.SetAddressId(addr.Id)
-		// 设置收货站ID
-		u.SetStationId(addr.StationId)
-		// 设置城市编码
-		u.SetCityNumber(addr.CityNumber)
 	}
+	// 设置收货地址ID
+	u.SetAddressId(addr.Id)
 
+	// 设置收货站ID
+	u.SetStationId(addr.StationId)
+
+	// 设置城市编码
+	u.SetCityNumber(addr.CityNumber)
+
+	ud, err := u.GetUserDetail()
+	if err != nil {
+		return err
+	}
+	// 设置用户详情
+	u.SetUserDetail(ud)
+
+	// 设置header ddmc uid
+	u.SetHeaders(map[string]string{
+		"ddmc-uid": ud.UserInfo.Id,
+	})
+
+	// 设置body uid
+	u.SetBody(map[string]string{
+		"uid": ud.UserInfo.Id,
+	})
 	return nil
 }
 
-func (u *User) SetDefaultHeaders(cookie, uid string) {
+func (u *User) SetDefaultHeaders(cookie string) {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 	if !strings.HasPrefix(cookie, "DDXQSESSID") {
@@ -42,10 +137,10 @@ func (u *User) SetDefaultHeaders(cookie, uid string) {
 	}
 	u.headers = map[string]string{
 		// Header必填项
-		"ddmc-device-id": "",
-		"cookie":         cookie,
-		"ddmc-uid":       uid,
-		"user-agent":     "",
+		"cookie": cookie,
+
+		// 根据cookie动态获取
+		"ddmc-uid": "",
 
 		// 下面作为小程序2.83.0版本的默认值
 		"ddmc-build-version": "2.83.0",
@@ -57,9 +152,11 @@ func (u *User) SetDefaultHeaders(cookie, uid string) {
 		"ddmc-app-client-id": "4",
 		"ddmc-ip":            "",
 		"ddmc-api-version":   "9.50.0",
+		"ddmc-device-id":     "",
 		"referer":            "https://servicewechat.com/wx1e113254eda17715/425/page-frame.html",
 		"content-type":       "application/x-www-form-urlencoded",
 		"accept":             "*/*",
+		"user-agent":         "Mozilla/5.0 (iPhone; CPU iPhone OS 11_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E217 MicroMessenger/6.8.0(0x16080000) NetType/WIFI Language/en Branch/Br_trunk MiniProgramEnv/Mac",
 		// 不要添加此accept encoding，否则结果会被压缩乱码返回
 		//"accept-encoding":    "gzip,compress,br,deflate",
 	}
@@ -98,7 +195,6 @@ func (u *User) SetDefaultBody() {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 	u.body = url.Values{
-		// Body必填项
 		"s_id":         []string{""},
 		"device_token": []string{""},
 
@@ -145,4 +241,28 @@ func (u *User) BodyDeepCopy() url.Values {
 		cp[k] = v
 	}
 	return cp
+}
+
+func (u *User) GetUserDetail() (*UserDetail, error) {
+	// body参数为共享，提交购物车时添加了products等参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
+	u.SetBody(map[string]string{
+		"products":      "",
+		"package_order": "",
+		"packages":      "",
+	})
+
+	u.SetClient(constants.UserDetail)
+	resp, err := u.Client().Get(u.HeadersDeepCopy(), u.BodyDeepCopy())
+	if err != nil {
+		klog.Info(err.Error())
+		return nil, err
+	}
+
+	var ud UserDetail
+	userBytes, _ := json.Marshal(resp.Data)
+	if err := json.Unmarshal(userBytes, &ud); err != nil {
+		return nil, fmt.Errorf("解析用户数据出错, 错误: %v", err.Error())
+	}
+	klog.Infof("获取用户信息成功, 用户: %s, id: %s", ud.UserInfo.Name, ud.UserInfo.Id)
+	return &ud, nil
 }

@@ -31,25 +31,32 @@ const (
 )
 
 var (
-	c  string
-	sy int
+	c    string
+	sy   int
+	play bool
 )
 
 // 应用小程序版本：2.83.0
 func main() {
 	flag.StringVar(&c, "cookie", "", "请求头部的Cookie")
 	flag.IntVar(&sy, "strategy", 1, "设置抢菜策略")
+
+	// 抢菜成功后是否播放《Everything I Need》通知用户
+	// 0: 不播放
+	// 1: 播放
+	flag.BoolVar(&play, "play", true, "抢菜成功后播放音乐通知用户")
 	setDefault()
 
 	// 1. 初始化用户必须的参数数据
-	user := user.NewDefaultUser()
-	if err := user.LoadConfig(c); err != nil {
+	u := user.NewDefaultUser()
+	if err := u.LoadConfig(c); err != nil {
 		return
 	}
 
 	// 2. 构建实际调度策略
 	factory := schedule.NewSchedulerFactory()
-	scheduler := factory.Build(strategy, user, defaultBaseThreadSize, defaultSubmitOrderThreadSize, 1000, 1500, []string{"50 59 05 * * ?", "50 29 08 * * ?"})
+	scheduler := factory.Build(strategy, u, defaultBaseThreadSize, defaultSubmitOrderThreadSize,
+		1000, 1500, []string{"50 59 05 * * ?", "50 29 08 * * ?"}, play)
 
 	// 3. 运行调度策略抢菜
 	if err := scheduler.Schedule(context.TODO()); err != nil {

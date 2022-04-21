@@ -15,13 +15,14 @@ type TimingScheduler struct {
 	crons     []string // cron job 调度时间
 }
 
-func NewTimingScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int, crons []string) Interface {
+func NewTimingScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int, crons []string, play bool) Interface {
 	if minSleepMillis > maxSleepMillis {
 		maxSleepMillis = minSleepMillis
 	}
 	return &TimingScheduler{
 		Scheduler: Scheduler{
 			o:                    o,
+			play:                 play,
 			baseTheadSize:        baseTheadSize,
 			submitOrderTheadSize: submitOrderTheadSize,
 			minSleepMillis:       minSleepMillis,

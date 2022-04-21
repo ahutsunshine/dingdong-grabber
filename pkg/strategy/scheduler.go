@@ -4,17 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	"k8s.io/klog"
-
+	"github.com/dingdong-grabber/pkg/notice"
 	"github.com/dingdong-grabber/pkg/order"
+	"k8s.io/klog"
 )
 
 type Scheduler struct {
 	o                    *order.Order
+	play                 bool    // 播放音乐按钮
 	minOrderPrice        float64 // 最小订单成交金额
 	baseTheadSize        int     // 基础信息执行线程数
 	submitOrderTheadSize int     // 提交订单执行线程数
@@ -154,6 +156,17 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 				s.o.SetStop(true)
 
 				klog.Infof("下单成功，请在5分钟内支付金额: %s，否则订单会被叮咚自动取消", s.o.Cart()["total_money"])
+
+				// 播放音乐通知用户
+				if s.play {
+					mp3 := &notice.Mp3{}
+					if err = mp3.Play("./music/everything_I_need.mp3"); err != nil {
+						klog.Error(err)
+					}
+				}
+
+				// 正常退出程序
+				os.Exit(0)
 			}
 		}()
 	}

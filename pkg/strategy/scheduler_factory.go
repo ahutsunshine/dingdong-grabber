@@ -17,12 +17,13 @@ func NewSchedulerFactory() *schedulerFactory {
 	return &schedulerFactory{}
 }
 
-func (sf *schedulerFactory) Build(strategy int, u *user.User, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int, crons []string) Interface {
+func (sf *schedulerFactory) Build(strategy int, u *user.User, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int,
+	crons []string, play bool) Interface {
 	switch strategy {
 	case 0: // 人工策略
-		return NewManualScheduler(order.NewOrder(u, order.ManualStrategy), baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis)
+		return NewManualScheduler(order.NewOrder(u, order.ManualStrategy), baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis, play)
 	case 1: // 定时策略
-		return NewTimingScheduler(order.NewOrder(u, order.TimingStrategy), baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis, crons)
+		return NewTimingScheduler(order.NewOrder(u, order.TimingStrategy), baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis, crons, play)
 	default:
 		klog.Fatalf("不支持此无效策略: %d", strategy)
 	}

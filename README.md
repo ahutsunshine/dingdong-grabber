@@ -38,7 +38,6 @@
 ## 2. 填写用户参数
 
 - 请求头部的`Cookie`：填入`main.go` cookie参数中
-- 请求头部的`ddmc-uid`：填入`main.go` uid参数中
 
 ## 3. 运行
 

@@ -77,6 +77,11 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
+				// 购物车无可购买的商品
+				if cart == nil {
+					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
+					continue
+				}
 				if cart["total_money"] == nil {
 					bytes, err := json.Marshal(cart)
 					if err != nil {

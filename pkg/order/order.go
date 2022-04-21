@@ -2,7 +2,6 @@ package order
 
 import (
 	"encoding/json"
-	"errors"
 	"strings"
 	"sync"
 	"time"
@@ -112,14 +111,14 @@ func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 	var t []Times
 	timesBytes, _ := json.Marshal(resp.Data)
 	if err := json.Unmarshal(timesBytes, &t); err != nil {
-		klog.Errorf("商品预约时间出错, 错误: %v", err.Error())
+		klog.Errorf("解析预约时间出错, 错误: %v", err.Error())
 		return nil, err
 	}
 
 	// 判断叮咚官方是否提供可选的配送时间
 	if len(t) == 0 || len(t[0].Times) == 0 {
 		klog.Error("叮咚官方未提供任何配送时间")
-		return nil, errors.New("叮咚官方未提供任何配送时间")
+		return nil, nil
 	}
 
 	var reservedTime = make(map[string]interface{})
@@ -138,7 +137,7 @@ func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 	}
 	klog.Errorf("无可选的配送时间, 原因: %s", unableInfo)
 
-	return nil, errors.New("无可选的配送时间")
+	return nil, nil
 }
 
 func timestamp2Str(tst int64) string {
@@ -219,7 +218,7 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 		"freight_discount_money": orders.Order.FreightDiscountMoney,
 		"freight_money":          orders.Order.FreightMoney,
 		"freight_real_money":     orders.Order.FreightRealMoney,
-		"user_ticket_id":         orders.Order.DefaultCoupon["default_coupon"],
+		"user_ticket_id":         orders.Order.DefaultCoupon["default_coupon"].Id,
 	}, nil
 }
 

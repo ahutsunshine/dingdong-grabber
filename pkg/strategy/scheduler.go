@@ -74,14 +74,13 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 
 		go func() {
 			for !s.o.Stop() {
+				time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 				cart, err := s.o.GetCart()
 				if err != nil {
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				// 购物车无可购买的商品
 				if cart == nil {
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				if cart["total_money"] == nil {
@@ -91,7 +90,6 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 					} else {
 						klog.Infof("获取购物总金额出错，购物车无总金额参数, 详情: %s", string(bytes))
 					}
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				money, err := strconv.ParseFloat(cart["total_money"].(string), 64)
@@ -111,13 +109,12 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 
 		go func() {
 			for !s.o.Stop() {
+				time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 				if s.o.Cart() == nil {
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				reservedTimes, err := s.o.GetMultiReserveTime()
 				if err != nil {
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				s.o.SetReservedTime(reservedTimes)
@@ -126,13 +123,12 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 
 		go func() {
 			for !s.o.Stop() {
+				time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 				if s.o.Cart() == nil || s.o.ReservedTime() == nil {
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				checkOrder, err := s.o.GetCheckOrder()
 				if err != nil {
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				s.o.SetCheckOrder(checkOrder)
@@ -144,12 +140,10 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 		go func() {
 			for !s.o.Stop() {
 				if s.o.Cart() == nil || s.o.ReservedTime() == nil || s.o.CheckOrder() == nil {
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				_, err := s.o.SubmitOrder()
 				if err != nil {
-					time.Sleep(time.Duration(rand.Intn(s.maxSleepMillis-s.minSleepMillis)+s.minSleepMillis) * time.Millisecond)
 					continue
 				}
 				// 下单已成功，停止抢菜

@@ -235,11 +235,11 @@ func (o *Order) SubmitOrder() (bool, error) {
 		"freight_money":          checkOrder["freight_money"],
 		"order_freight":          checkOrder["freight_real_money"],
 		"parent_order_sign":      cart["parent_order_sign"],
-		"product_type":           "1",
+		"product_type":           1,
 		"address_id":             o.user.AddressId(),
 		"form_id":                strings.ReplaceAll(uuid.New().String(), "-", ""),
 		"receipt_without_sku":    nil,
-		"pay_type":               6,
+		"pay_type":               6, // 2: 支付宝支付, 4: 微信支付，6: 微信小程序支付
 		"user_ticket_id":         checkOrder["user_ticket_id"],
 		"vip_money":              "",
 		"vip_buy_user_ticket_id": "",
@@ -278,6 +278,7 @@ func (o *Order) SubmitOrder() (bool, error) {
 			"reserved_time_end":         reservedTime["reserved_time_end"],
 			"soon_arrival":              "",
 			"first_selected_big_time":   0,
+			"receipt_without_sku":       0,
 		},
 	}
 	payment := map[string]interface{}{
@@ -290,7 +291,7 @@ func (o *Order) SubmitOrder() (bool, error) {
 		"package_order": string(paymentBytes),
 		"showMsg":       "false",
 		"showData":      "true",
-		"ab_config":     "{\"key_onion\":\"C\"}",
+		"ab_config":     `{"key_onion":"C"}`,
 	})
 
 	o.user.SetClient(constants.SubmitOrder)

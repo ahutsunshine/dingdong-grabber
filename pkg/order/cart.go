@@ -4,24 +4,27 @@ import (
 	"encoding/json"
 
 	"github.com/dingdong-grabber/pkg/constants"
+	"github.com/dingdong-grabber/pkg/http"
 	"k8s.io/klog"
 )
 
 // CheckAll 勾选购物车全选按钮
 func (o *Order) CheckAll() error {
+	var (
+		client = http.NewClient(constants.CartCheck)
+		body   = o.user.Body()
+	)
 	// 关键参数，必须要带
-	o.user.SetBody(map[string]string{
+	client.SetBody(body, map[string]string{
 		"is_check": "1",
 		"is_load":  "1",
-
-		// body参数为共享，提交购物车时添加了products等参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
-		"products":      "",
-		"package_order": "",
-		"packages":      "",
 	})
 
-	o.user.SetClient(constants.CartCheck)
-	if _, err := o.user.Client().Get(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy()); err != nil {
+	if err := client.Sign(body); err != nil {
+		return err
+	}
+
+	if _, err := client.Get(o.user.Header(), body); err != nil {
 		klog.Infof("勾选购物车全选按钮失败, 错误: %v", err)
 		return err
 	}
@@ -32,18 +35,19 @@ func (o *Order) CheckAll() error {
 
 // GetCart 获取购物车商品信息
 func (o *Order) GetCart() (map[string]interface{}, error) {
-	o.user.SetBody(map[string]string{
+	var (
+		client = http.NewClient(constants.Cart)
+		body   = o.user.Body()
+	)
+	client.SetBody(body, map[string]string{
 		"is_load":   "1",                                                       // 关键参数，必须要带
 		"ab_config": "{\"key_onion\":\"D\",\"key_cart_discount_price\":\"C\"}", // 可选参数
-
-		// body参数为共享，提交购物车时添加了products等参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
-		"products":      "",
-		"package_order": "",
-		"packages":      "",
 	})
+	if err := client.Sign(body); err != nil {
+		return nil, err
+	}
 
-	o.user.SetClient(constants.Cart)
-	resp, err := o.user.Client().Get(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
+	resp, err := client.Get(o.user.Header(), body)
 	if err != nil {
 		klog.Errorf("获取购物车商品失败, 错误: %v", err)
 		return nil, err

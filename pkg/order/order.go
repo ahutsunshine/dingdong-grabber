@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/dingdong-grabber/pkg/constants"
+	"github.com/dingdong-grabber/pkg/http"
 	"github.com/dingdong-grabber/pkg/user"
 	"github.com/google/uuid"
 	"k8s.io/klog"
@@ -92,8 +93,13 @@ func (o *Order) CheckOrder() map[string]interface{} {
 
 // GetMultiReserveTime 获取配送时间
 func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
-	products, _ := json.Marshal([]interface{}{o.cart["products"]})
-	o.user.SetBody(map[string]string{
+	var (
+		client      = http.NewClient(constants.ReserveTime)
+		body        = o.user.Body()
+		products, _ = json.Marshal([]interface{}{o.cart["products"]})
+	)
+
+	client.SetBody(body, map[string]string{
 		// 关键参数
 		"address_id":      o.user.AddressId(),
 		"products":        string(products),
@@ -101,8 +107,11 @@ func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 		"isBridge":        "false",
 	})
 
-	o.user.SetClient(constants.ReserveTime)
-	resp, err := o.user.Client().Post(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
+	if err := client.Sign(body); err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Post(o.user.Header(), body)
 	if err != nil {
 		klog.Errorf("获取预约时间失败, 错误: %v", err)
 		return nil, err
@@ -146,7 +155,12 @@ func timestamp2Str(tst int64) string {
 
 // GetCheckOrder 获取订单确认信息
 func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
-	cart := o.Cart()
+	var (
+		client = http.NewClient(constants.CheckOrder)
+		body   = o.user.Body()
+		cart   = o.Cart()
+	)
+
 	// 构造商品参数信息
 	packages := map[string]interface{}{
 		"products":                  cart["products"],
@@ -181,7 +195,7 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 	}
 	packagesBytes, _ := json.Marshal([]interface{}{packages})
 
-	o.user.SetBody(map[string]string{
+	client.SetBody(body, map[string]string{
 		// 设置基础参数信息
 		"address_id":               o.user.AddressId(),
 		"user_ticket_id":           "default",
@@ -198,8 +212,11 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 		"packages":                 string(packagesBytes),
 	})
 
-	o.user.SetClient(constants.CheckOrder)
-	resp, err := o.user.Client().Post(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
+	if err := client.Sign(body); err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Post(o.user.Header(), body)
 	if err != nil {
 		klog.Errorf("获取订单确认信息失败, 错误: %s", err.Error())
 		return nil, err
@@ -224,9 +241,14 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 
 // SubmitOrder 提交订单
 func (o *Order) SubmitOrder() (bool, error) {
-	reservedTime := o.ReservedTime()
-	checkOrder := o.CheckOrder()
-	cart := o.Cart()
+	var (
+		client       = http.NewClient(constants.SubmitOrder)
+		body         = o.user.Body()
+		reservedTime = o.ReservedTime()
+		checkOrder   = o.CheckOrder()
+		cart         = o.Cart()
+	)
+
 	paymentOrder := map[string]interface{}{
 		"reserved_time_start":    reservedTime["reserved_time_start"],
 		"reserved_time_end":      reservedTime["reserved_time_end"],
@@ -287,15 +309,18 @@ func (o *Order) SubmitOrder() (bool, error) {
 	}
 	paymentBytes, _ := json.Marshal(payment)
 
-	o.user.SetBody(map[string]string{
+	client.SetBody(body, map[string]string{
 		"package_order": string(paymentBytes),
 		"showMsg":       "false",
 		"showData":      "true",
 		"ab_config":     `{"key_onion":"C"}`,
 	})
 
-	o.user.SetClient(constants.SubmitOrder)
-	resp, err := o.user.Client().Post(o.user.HeadersDeepCopy(), o.user.BodyDeepCopy())
+	if err := client.Sign(body); err != nil {
+		return false, err
+	}
+
+	resp, err := client.Post(o.user.Header(), body)
 	if err != nil {
 		klog.Errorf("提交订单失败, 错误: %s 当前下单总金额：%v", err, cart["total_money"])
 		return false, err

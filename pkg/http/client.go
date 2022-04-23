@@ -10,11 +10,13 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/dingdong-grabber/pkg/constants"
+	"github.com/dingdong-grabber/pkg/sign"
 	"k8s.io/klog"
 )
 
 type Client struct {
-	Url string
+	url string
 	mtx sync.RWMutex
 }
 
@@ -27,8 +29,25 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
+func NewClient(url string) *Client {
+	return &Client{
+		url: url,
+	}
+}
+func (c *Client) Url() string {
+	c.mtx.RLock()
+	defer c.mtx.RUnlock()
+	return c.url
+}
+
+func (c *Client) SetUrl(url string) {
+	c.mtx.Lock()
+	defer c.mtx.Unlock()
+	c.url = url
+}
+
 func (c *Client) request(method string, headers map[string]string, params url.Values) (*Response, error) {
-	req, err := http.NewRequest(method, c.Url, nil)
+	req, err := http.NewRequest(method, c.Url(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +88,7 @@ func decode(req *http.Request, headers map[string]string) (rsp *Response, err er
 }
 
 func (c *Client) requestForm(method string, headers map[string]string, params url.Values) (*Response, error) {
-	req, err := http.NewRequest(method, c.Url, strings.NewReader(params.Encode()))
+	req, err := http.NewRequest(method, c.Url(), strings.NewReader(params.Encode()))
 	if err != nil {
 		return nil, err
 	}
@@ -107,4 +126,20 @@ func (c *Client) Get(headers map[string]string, params url.Values) (*Response, e
 
 func (c *Client) Post(header map[string]string, params url.Values) (*Response, error) {
 	return c.requestForm(http.MethodPost, header, params)
+}
+
+func (c *Client) SetBody(body url.Values, params map[string]string) {
+	for k, v := range params {
+		body[k] = []string{v}
+	}
+}
+
+func (c *Client) Sign(body url.Values) error {
+	signs, err := sign.NewDefaultJsSign().Sign(body)
+	if err != nil {
+		return err
+	}
+	body[constants.SignNars] = []string{signs[constants.SignNars]}
+	body[constants.SignSesi] = []string{signs[constants.SignSesi]}
+	return nil
 }

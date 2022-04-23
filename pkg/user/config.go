@@ -29,8 +29,8 @@ func NewDefaultUser() *User {
 }
 
 func (u *User) SetUserDetail(userDetail *UserDetail) {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
 	u.userDetail = userDetail
 }
 
@@ -52,40 +52,6 @@ func (u *User) SetAddressId(addressId string) {
 	u.addressId = addressId
 }
 
-func (u *User) SetClient(url string) {
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
-	u.c.Url = url
-}
-
-func (u *User) Client() *http.Client {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
-	return u.c
-}
-
-func (u *User) SetStationId(stationId string) {
-	var (
-		headers = u.Headers()
-		body    = u.Body()
-	)
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
-	headers["ddmc-station-id"] = stationId
-	body["station_id"] = []string{stationId}
-}
-
-func (u *User) SetCityNumber(cityNumber string) {
-	var (
-		headers = u.Headers()
-		body    = u.Body()
-	)
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
-	headers["ddmc-city-number"] = cityNumber
-	body["city_number"] = []string{cityNumber}
-}
-
 func (u *User) LoadConfig(cookie string) error {
 	if cookie == "" {
 		klog.Fatal("请求头cookie为必填项")
@@ -96,19 +62,6 @@ func (u *User) LoadConfig(cookie string) error {
 
 	// 设置Body默认请求参数
 	u.SetDefaultBody()
-
-	addr, err := u.GetDefaultAddr()
-	if err != nil {
-		return err
-	}
-	// 设置收货地址ID
-	u.SetAddressId(addr.Id)
-
-	// 设置收货站ID
-	u.SetStationId(addr.StationId)
-
-	// 设置城市编码
-	u.SetCityNumber(addr.CityNumber)
 
 	ud, err := u.GetUserDetail()
 	if err != nil {
@@ -126,14 +79,32 @@ func (u *User) LoadConfig(cookie string) error {
 	u.SetBody(map[string]string{
 		"uid": ud.UserInfo.Id,
 	})
+
+	addr, err := u.GetDefaultAddr()
+	if err != nil {
+		return err
+	}
+	// 设置收货地址ID
+	u.SetAddressId(addr.Id)
+
+	// 设置Header和Body收货站ID和城市编码
+	u.SetHeaders(map[string]string{
+		"ddmc-station-id":  addr.StationId,
+		"ddmc-city-number": addr.CityNumber,
+	})
+	u.SetBody(map[string]string{
+		"station_id":  addr.StationId,
+		"city_number": addr.CityNumber,
+	})
+
 	return nil
 }
 
 func (u *User) SetDefaultHeaders(cookie string) {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
-	if !strings.HasPrefix(cookie, "DDXQSESSID") {
-		cookie = fmt.Sprintf("DDXQSESSID=%s", cookie)
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
+	if !strings.HasPrefix(cookie, constants.CookiePrefix) {
+		cookie = fmt.Sprintf("%s=%s", constants.CookiePrefix, cookie)
 	}
 	u.headers = map[string]string{
 		// Header必填项
@@ -141,6 +112,10 @@ func (u *User) SetDefaultHeaders(cookie string) {
 
 		// 根据cookie动态获取
 		"ddmc-uid": "",
+
+		// 设置经纬度, 获取默认地址时会自动添加
+		"ddmc-longitude": "",
+		"ddmc-latitude":  "",
 
 		// 下面作为小程序2.83.0版本的默认值
 		"ddmc-build-version": "2.83.0",
@@ -164,26 +139,19 @@ func (u *User) SetDefaultHeaders(cookie string) {
 
 // SetHeaders 设置header参数，避免header因多并发引起的concurrent map writes
 func (u *User) SetHeaders(headers map[string]string) {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
 	for k, v := range headers {
 		u.headers[k] = v
 	}
 }
 
-func (u *User) Headers() map[string]string {
+// Header 返回请求header的复制
+func (u *User) Header() map[string]string {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
-	return u.headers
-}
-
-// HeadersDeepCopy 为了避免多并发造成的并发读写问题: fatal error: concurrent map read and map write
-func (u *User) HeadersDeepCopy() map[string]string {
-	var headers = u.Headers()
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
 	var cp = make(map[string]string)
-	for k, v := range headers {
+	for k, v := range u.headers {
 		cp[k] = v
 	}
 	return cp
@@ -191,9 +159,9 @@ func (u *User) HeadersDeepCopy() map[string]string {
 
 // SetDefaultBody 设置默认的用户初始化数据
 func (u *User) SetDefaultBody() {
-	var headers = u.Headers()
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
+	u.mtx.Lock()
+	defer u.mtx.Unlock()
+	var headers = u.headers
 	u.body = url.Values{
 		"s_id":         []string{""},
 		"device_token": []string{""},
@@ -225,34 +193,28 @@ func (u *User) SetBody(body map[string]string) {
 	}
 }
 
+// Body 返回请求body的复制
 func (u *User) Body() url.Values {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
-	return u.body
-}
-
-// BodyDeepCopy 为了避免多并发造成的并发读写问题: fatal error: concurrent map read and map write
-func (u *User) BodyDeepCopy() url.Values {
-	var body = u.Body()
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
 	var cp = make(url.Values)
-	for k, v := range body {
+	for k, v := range u.body {
 		cp[k] = v
 	}
 	return cp
 }
 
 func (u *User) GetUserDetail() (*UserDetail, error) {
-	// body参数为共享，提交购物车时添加了products等参数，可能会导致请求参数过长造成invalid character '<' looking for beginning of value，这里重新设置为空字符
-	u.SetBody(map[string]string{
-		"products":      "",
-		"package_order": "",
-		"packages":      "",
-	})
+	var (
+		client = http.NewClient(constants.UserDetail)
+		body   = u.Body()
+	)
 
-	u.SetClient(constants.UserDetail)
-	resp, err := u.Client().Get(u.HeadersDeepCopy(), u.BodyDeepCopy())
+	if err := client.Sign(body); err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Get(u.Header(), body)
 	if err != nil {
 		klog.Info(err.Error())
 		return nil, err

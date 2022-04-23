@@ -3,7 +3,9 @@ package strategy
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"math/rand"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -22,6 +24,7 @@ type Scheduler struct {
 	submitOrderTheadSize int     // 提交订单执行线程数
 	minSleepMillis       int     // 请求间隔时间最小值
 	maxSleepMillis       int     // 请求间隔时间最大值
+	pushToken            string
 }
 
 // Run 作为保护线程负责检查订单是否下单成功，2分钟未下单自动终止,避免对叮咚服务器造成压力,也避免封号
@@ -54,7 +57,7 @@ func (s *Scheduler) Run(ctx context.Context) {
 }
 
 func (s *Scheduler) Schedule(ctx context.Context) error {
-	// 1. 开启下单守护线程
+	// 1. 开启下单守护线程 //
 	s.Run(ctx)
 
 	// 2. 线程并发开始下单
@@ -148,9 +151,19 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 				}
 				// 下单已成功，停止抢菜
 				s.o.SetStop(true)
-
+				data := s.o.Cart()["total_money"]
+				fmt.Println(data)
 				klog.Infof("下单成功，请在5分钟内支付金额: %s，否则订单会被叮咚自动取消", s.o.Cart()["total_money"])
 
+				i := 0
+				for {
+					if i > 4 {
+						break
+					}
+					s.SendPush(s.o.Cart()["total_money"])
+					time.Sleep(time.Second * 10)
+					i++
+				}
 				// 播放音乐通知用户
 				if s.play {
 					mp3 := &notice.Mp3{}
@@ -165,4 +178,35 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 		}()
 	}
 	return nil
+}
+
+type push struct {
+	Token   string
+	Title   string
+	Content string
+}
+
+func (s *Scheduler) SendPush(v interface{}) {
+	url := "http://www.pushplus.plus/send"
+	method := "POST"
+	//同一时间内内容不能相同
+	var model = &push{
+		Token:   s.pushToken,
+		Title:   "抢菜已成功，请前往APP付款",
+		Content: "下单成功，请在5分钟内支付金额:" + fmt.Sprintln(v) + "，否则订单会被叮咚自动取消" + time.Now().String(),
+	}
+	marshal, err := json.Marshal(model)
+	if err != nil {
+		return
+	}
+	payload := strings.NewReader(string(marshal))
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, payload)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	client.Do(req)
 }

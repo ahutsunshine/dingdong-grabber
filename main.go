@@ -30,6 +30,8 @@ const (
 
 	// 必须填写用户cookie， cookie代表人的身份
 	cookie = "" // 请求头部的Cookie
+
+	pushToken = "" //http://www.pushplus.plus/ 公众号pushplus注册后 发送 "token" 获取token
 )
 
 var (
@@ -58,7 +60,7 @@ func main() {
 	// 2. 构建实际调度策略
 	factory := schedule.NewSchedulerFactory()
 	scheduler := factory.Build(strategy, u, defaultBaseThreadSize, defaultSubmitOrderThreadSize,
-		defaultMinSleepMillis, defaultMaxSleepMillis, []string{"50 59 05 * * ?", "50 29 08 * * ?"}, play)
+		defaultMinSleepMillis, defaultMaxSleepMillis, []string{"50 59 05 * * ?", "50 29 08 * * ?"}, play, pushToken)
 
 	// 3. 运行调度策略抢菜
 	if err := scheduler.Schedule(context.TODO()); err != nil {

@@ -20,10 +20,6 @@ func (o *Order) CheckAll() error {
 		"is_load":  "1",
 	})
 
-	if err := client.Sign(body); err != nil {
-		return err
-	}
-
 	if _, err := client.Get(o.user.Header(), body); err != nil {
 		klog.Infof("勾选购物车全选按钮失败, 错误: %v", err)
 		return err
@@ -43,9 +39,6 @@ func (o *Order) GetCart() (map[string]interface{}, error) {
 		"is_load":   "1",                                                       // 关键参数，必须要带
 		"ab_config": "{\"key_onion\":\"D\",\"key_cart_discount_price\":\"C\"}", // 可选参数
 	})
-	if err := client.Sign(body); err != nil {
-		return nil, err
-	}
 
 	resp, err := client.Get(o.user.Header(), body)
 	if err != nil {

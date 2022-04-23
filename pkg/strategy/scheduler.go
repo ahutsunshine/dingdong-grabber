@@ -100,7 +100,7 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 					return
 				}
 				if money < s.minOrderPrice {
-					klog.Infof("订单金额：%s, 不满足最小金额设置：%s, 继续重试", cart["total_money"], s.minOrderPrice)
+					klog.Infof("订单金额：%f, 不满足最小金额设置：%f, 继续重试", cart["total_money"], s.minOrderPrice)
 				} else {
 					s.o.SetCart(cart)
 				}

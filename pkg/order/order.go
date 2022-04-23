@@ -107,10 +107,6 @@ func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 		"isBridge":        "false",
 	})
 
-	if err := client.Sign(body); err != nil {
-		return nil, err
-	}
-
 	resp, err := client.Post(o.user.Header(), body)
 	if err != nil {
 		klog.Errorf("获取预约时间失败, 错误: %v", err)
@@ -212,10 +208,6 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 		"packages":                 string(packagesBytes),
 	})
 
-	if err := client.Sign(body); err != nil {
-		return nil, err
-	}
-
 	resp, err := client.Post(o.user.Header(), body)
 	if err != nil {
 		klog.Errorf("获取订单确认信息失败, 错误: %s", err.Error())
@@ -315,10 +307,6 @@ func (o *Order) SubmitOrder() (bool, error) {
 		"showData":      "true",
 		"ab_config":     `{"key_onion":"C"}`,
 	})
-
-	if err := client.Sign(body); err != nil {
-		return false, err
-	}
 
 	resp, err := client.Post(o.user.Header(), body)
 	if err != nil {

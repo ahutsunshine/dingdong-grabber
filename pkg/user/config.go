@@ -210,10 +210,6 @@ func (u *User) GetUserDetail() (*UserDetail, error) {
 		body   = u.Body()
 	)
 
-	if err := client.Sign(body); err != nil {
-		return nil, err
-	}
-
 	resp, err := client.Get(u.Header(), body)
 	if err != nil {
 		klog.Info(err.Error())

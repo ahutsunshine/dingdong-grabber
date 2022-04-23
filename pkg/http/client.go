@@ -121,10 +121,16 @@ func checkSuccess(resp *Response) (*Response, error) {
 }
 
 func (c *Client) Get(headers map[string]string, params url.Values) (*Response, error) {
+	if err := c.Sign(params); err != nil {
+		return nil, err
+	}
 	return c.request(http.MethodGet, headers, params)
 }
 
 func (c *Client) Post(header map[string]string, params url.Values) (*Response, error) {
+	if err := c.Sign(params); err != nil {
+		return nil, err
+	}
 	return c.requestForm(http.MethodPost, header, params)
 }
 

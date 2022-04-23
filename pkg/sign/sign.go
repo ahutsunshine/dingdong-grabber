@@ -2,7 +2,9 @@ package sign
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"os"
 
 	"github.com/robertkrimen/otto"
 	"k8s.io/klog"
@@ -13,7 +15,11 @@ type JsSign struct {
 }
 
 func NewDefaultJsSign() SignInterface {
-	return NewSign("../../sign.js")
+	dir, err := os.Getwd()
+	if err != nil {
+		klog.Fatal(err)
+	}
+	return NewSign(fmt.Sprintf("%s%s", dir, "/sign.js"))
 }
 
 func NewSign(file string) SignInterface {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/dingdong-grabber/pkg/notice"
 	"math/rand"
 	"net/http"
 	"os"
@@ -11,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dingdong-grabber/pkg/notice"
 	"github.com/dingdong-grabber/pkg/order"
 	"k8s.io/klog"
 )
@@ -155,6 +155,15 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 				fmt.Println(data)
 				klog.Infof("下单成功，请在5分钟内支付金额: %s，否则订单会被叮咚自动取消", s.o.Cart()["total_money"])
 
+				go func() {
+					// 播放音乐通知用户
+					if s.play {
+						mp3 := &notice.Mp3{}
+						if err = mp3.Play("./music/everything_I_need.mp3"); err != nil {
+							klog.Error(err)
+						}
+					}
+				}()
 				i := 0
 				for {
 					if i > 4 {
@@ -164,14 +173,6 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 					time.Sleep(time.Second * 10)
 					i++
 				}
-				// 播放音乐通知用户
-				if s.play {
-					mp3 := &notice.Mp3{}
-					if err = mp3.Play("./music/everything_I_need.mp3"); err != nil {
-						klog.Error(err)
-					}
-				}
-
 				// 正常退出程序
 				os.Exit(0)
 			}

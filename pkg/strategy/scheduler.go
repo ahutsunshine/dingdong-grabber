@@ -5,15 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/dingdong-grabber/pkg/notice"
+	"github.com/dingdong-grabber/pkg/order"
+	"k8s.io/klog"
 	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/dingdong-grabber/pkg/order"
-	"k8s.io/klog"
 )
 
 type Scheduler struct {

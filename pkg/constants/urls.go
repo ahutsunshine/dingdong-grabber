@@ -8,8 +8,5 @@ const (
 	ReserveTime = "https://maicai.api.ddxq.mobi/order/getMultiReserveTime" // 预约送达时间地址
 	CheckOrder  = "https://maicai.api.ddxq.mobi/order/checkOrder"          // 获取确认订单地址
 	SubmitOrder = "https://maicai.api.ddxq.mobi/order/addNewOrder"         // 提交订单地址
-
-	CookiePrefix = "DDXQSESSID"
-	SignNars     = "nars"
-	SignSesi     = "sesi"
+	Push        = "http://www.pushplus.plus/send"                          //  推送地址
 )

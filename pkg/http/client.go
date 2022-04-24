@@ -1,6 +1,7 @@
 package http
 
 import (
+	"bytes"
 	"crypto/tls"
 	"encoding/json"
 	"errors"
@@ -120,11 +121,11 @@ func checkSuccess(resp *Response) (*Response, error) {
 	return nil, fmt.Errorf("%v", resp.Code)
 }
 
-func (c *Client) Get(headers map[string]string, params url.Values) (*Response, error) {
+func (c *Client) Get(header map[string]string, params url.Values) (*Response, error) {
 	if err := c.Sign(params); err != nil {
 		return nil, err
 	}
-	return c.request(http.MethodGet, headers, params)
+	return c.request(http.MethodGet, header, params)
 }
 
 func (c *Client) Post(header map[string]string, params url.Values) (*Response, error) {
@@ -132,6 +133,33 @@ func (c *Client) Post(header map[string]string, params url.Values) (*Response, e
 		return nil, err
 	}
 	return c.requestForm(http.MethodPost, header, params)
+}
+
+func (c *Client) RawPost(header map[string]string, params url.Values, body []byte) (*http.Response, error) {
+	req, err := http.NewRequest(http.MethodPost, c.Url(), bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	if len(params) > 0 {
+		req.URL.RawQuery = params.Encode()
+	}
+	var client = &http.Client{}
+	for k, v := range header {
+		req.Header.Add(k, v)
+	}
+
+	if req.URL.Scheme == "https" {
+		client = &http.Client{
+			Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
+		}
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		klog.Error(err)
+		return nil, err
+	}
+	return resp, nil
 }
 
 func (c *Client) SetBody(body url.Values, params map[string]string) {

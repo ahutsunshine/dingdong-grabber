@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/dingdong-grabber/pkg/constants"
 	"github.com/dingdong-grabber/pkg/http"
@@ -131,7 +130,7 @@ func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 		if d.DisableType == 0 && !strings.Contains(d.SelectMsg, "尽快") {
 			reservedTime["reserved_time_start"] = d.StartTimestamp
 			reservedTime["reserved_time_end"] = d.EndTimestamp
-			klog.Infof("更新配送时间成功, 配送时间段: [%v, %v]", timestamp2Str(d.StartTimestamp), timestamp2Str(d.EndTimestamp))
+			klog.Infof("更新配送时间成功, 配送时间段: %s", d.SelectMsg)
 			return reservedTime, nil
 		}
 	}
@@ -143,10 +142,6 @@ func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 	klog.Errorf("无可选的配送时间, 原因: %s", unableInfo)
 
 	return nil, nil
-}
-
-func timestamp2Str(tst int64) string {
-	return time.Unix(tst, 0).Format("2006-01-02 15:04:05")
 }
 
 // GetCheckOrder 获取订单确认信息

@@ -31,7 +31,8 @@ const (
 	// 必须填写用户cookie， cookie代表人的身份
 	cookie = "" // 请求头部的Cookie
 
-	pushToken = "" //http://www.pushplus.plus/ 公众号pushplus注册后 发送 "token" 获取token
+	// pushplus token用于推送下单成功消息, http://www.pushplus.plus
+	pushToken = ""
 )
 
 var (

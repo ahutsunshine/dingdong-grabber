@@ -1,6 +1,7 @@
 package notice
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -11,10 +12,25 @@ import (
 )
 
 type Mp3 struct {
+	Path string // mp3 path
 }
 
-func (m *Mp3) Play(path string) error {
-	audioFile, err := os.Open(path)
+func NewMp3(path string) NoticeInterface {
+	return &Mp3{
+		Path: path,
+	}
+}
+
+func NewDefaultMp3() NoticeInterface {
+	dir, err := os.Getwd()
+	if err != nil {
+		klog.Fatal(err)
+	}
+	return NewMp3(fmt.Sprintf("%s%s", dir, "/music/everything_I_need.mp3"))
+}
+
+func (m *Mp3) Notify() error {
+	audioFile, err := os.Open(m.Path)
 	if err != nil {
 		klog.Error(err)
 		return err

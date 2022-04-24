@@ -4,15 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/dingdong-grabber/pkg/notice"
-	"github.com/dingdong-grabber/pkg/order"
-	"k8s.io/klog"
 	"math/rand"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/dingdong-grabber/pkg/notice"
+	"github.com/dingdong-grabber/pkg/order"
+	"k8s.io/klog"
 )
 
 type Scheduler struct {
@@ -56,7 +56,7 @@ func (s *Scheduler) Run(ctx context.Context) {
 }
 
 func (s *Scheduler) Schedule(ctx context.Context) error {
-	// 1. 开启下单守护线程 //
+	// 1. 开启下单守护线程
 	s.Run(ctx)
 
 	// 2. 线程并发开始下单
@@ -155,57 +155,30 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 				go func() {
 					// 播放音乐通知用户
 					if s.play {
-						mp3 := &notice.Mp3{}
-						if err = mp3.Play("./music/everything_I_need.mp3"); err != nil {
+						mp3 := notice.NewDefaultMp3()
+						if err = mp3.Notify(); err != nil {
 							klog.Error(err)
 						}
 					}
 				}()
-				i := 0
-				for {
-					if i > 4 {
-						break
+
+				if s.pushToken != "" {
+					// 推送一次即可，失败则重试2次
+					for i := 0; i < 3; i++ {
+						p := notice.NewPush(s.pushToken, "抢菜已成功，请前往APP付款", fmt.Sprintf("下单成功，请在5分钟内支付金额: %v，否则订单会被叮咚自动取消", s.o.Cart()["total_money"]))
+						if err := p.Notify(); err == nil {
+							break
+						}
 					}
-					s.SendPush(s.o.Cart()["total_money"])
-					time.Sleep(time.Second * 10)
-					i++
 				}
+
+				// 休眠30s, 让音乐飞一会
+				time.Sleep(time.Second * 30)
+
 				// 正常退出程序
 				os.Exit(0)
 			}
 		}()
 	}
 	return nil
-}
-
-type push struct {
-	Token   string
-	Title   string
-	Content string
-}
-
-func (s *Scheduler) SendPush(v interface{}) {
-	url := "http://www.pushplus.plus/send"
-	method := "POST"
-	//同一时间内内容不能相同1 所以加时间
-	var model = &push{
-		Token:   s.pushToken,
-		Title:   "抢菜已成功，请前往APP付款",
-		Content: "下单成功，请在5分钟内支付金额:" + fmt.Sprintln(v) + "，否则订单会被叮咚自动取消" + time.Now().String(),
-	}
-	marshal, err := json.Marshal(model)
-	if err != nil {
-		klog.Error(err)
-		return
-	}
-	payload := strings.NewReader(string(marshal))
-
-	client := &http.Client{}
-	req, err := http.NewRequest(method, url, payload)
-
-	if err != nil {
-		klog.Error(err)
-		return
-	}
-	client.Do(req)
 }

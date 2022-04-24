@@ -6,8 +6,7 @@ import (
 
 func TestPlay(t *testing.T) {
 	go func() {
-		mp3 := &Mp3{}
-		if err := mp3.Play("../../music/everything_I_need.mp3"); err != nil {
+		if err := NewDefaultMp3(); err != nil {
 			panic(err)
 		}
 	}()

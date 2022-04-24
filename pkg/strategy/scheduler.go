@@ -151,8 +151,6 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 				}
 				// 下单已成功，停止抢菜
 				s.o.SetStop(true)
-				data := s.o.Cart()["total_money"]
-				fmt.Println(data)
 				klog.Infof("下单成功，请在5分钟内支付金额: %s，否则订单会被叮咚自动取消", s.o.Cart()["total_money"])
 
 				go func() {
@@ -198,6 +196,7 @@ func (s *Scheduler) SendPush(v interface{}) {
 	}
 	marshal, err := json.Marshal(model)
 	if err != nil {
+		klog.Error(err)
 		return
 	}
 	payload := strings.NewReader(string(marshal))
@@ -206,7 +205,7 @@ func (s *Scheduler) SendPush(v interface{}) {
 	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
-		fmt.Println(err)
+		klog.Error(err)
 		return
 	}
 	client.Do(req)

@@ -190,7 +190,7 @@ type push struct {
 func (s *Scheduler) SendPush(v interface{}) {
 	url := "http://www.pushplus.plus/send"
 	method := "POST"
-	//同一时间内内容不能相同
+	//同一时间内内容不能相同1 所以加时间
 	var model = &push{
 		Token:   s.pushToken,
 		Title:   "抢菜已成功，请前往APP付款",

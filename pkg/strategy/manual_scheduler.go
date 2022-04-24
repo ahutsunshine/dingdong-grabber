@@ -11,7 +11,7 @@ type ManualScheduler struct {
 	Scheduler `json:",inline"`
 }
 
-func NewManualScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int, play bool) Interface {
+func NewManualScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int, play bool, pushToken string) Interface {
 	if minSleepMillis > maxSleepMillis {
 		maxSleepMillis = minSleepMillis
 	}
@@ -22,6 +22,7 @@ func NewManualScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize, min
 		submitOrderTheadSize: submitOrderTheadSize,
 		minSleepMillis:       minSleepMillis,
 		maxSleepMillis:       maxSleepMillis,
+		pushToken:            pushToken,
 	}}
 }
 

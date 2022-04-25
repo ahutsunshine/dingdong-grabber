@@ -14,12 +14,6 @@
 
 ![](./教程/images/order/04-25/支付结果.png)
 
-# 04-24 抢菜更新
-
-@cpuztt 通过签名后的程序抢到了菜，但是我本人失败了(:尴尬)。 详情: https://github.com/ahutsunshine/dingdong-grabber/issues/13
-
-![](./教程/images/order/04-24-订单.png)
-
 # 重大更新！重大更新！重大更新！
 
 增加了签名算法，防止请求被风控返回`抱歉人多拥挤，请稍后再试`错误
@@ -44,19 +38,6 @@
 
 大家如果遇到问题或者有更合适的需求的话，可直接在Github的Issues提问或者给出建议，我每隔1h左右会看一眼，可以一起商量讨论，我会尽量解决和满足合理的需求。
 
-# 4-21 抢菜更新
-
-居然在凌晨12点多预抢到了，叮咚不是只在6:00和8:30开始预约吗? 这挺奇怪的，不过好在有捡漏模式监测到了。正在提供捡漏模式监控捡漏，后续更新捡漏模式代码，可以实时监测。
-![](./教程/images/order/04-21-订单.png)
-
-# 4-20 抢菜更新
-
-事实证明确实可以帮助身边的朋友抢到菜，挺开心的
-
-![](./教程/images/order/04-20-订单.png)
-
-![](./教程/images/order/04-20-订单日志.png)
-
 # 运行策略
 
 本程序暂时只提供两种策略。
@@ -66,18 +47,28 @@
 
 # 使用教程
 
-程序基于用户提供的用户数据运行，并不是直接根据手机号登录即可抢菜(这个需要开发小程序配合，后续会继续开发，这样用户只需要输入手机号和验证码即可开始抢菜了)， 所以第一步用户提供的数据获取至关重要，也是最难的一步。
+`dingdong-grapper`需要用户提供`Cookie`才可运行， 所以第一步用户需要通过抓包软件抓取相关的API提取`Cookie`。相关的API:
 
-## 1. 获取用户参数
+```
+获取用户信息: https://sunquan.api.ddxq.mobi/api/v1/user/detail/
+获取用户买菜地址: https://sunquan.api.ddxq.mobi/api/v1/user/address/    
+勾选购物车所有商品地址: https://maicai.api.ddxq.mobi/cart/allCheck
+获取购物车商品地址: https://maicai.api.ddxq.mobi/cart/index
+预约送达时间地址: https://maicai.api.ddxq.mobi/order/getMultiReserveTime
+获取确认订单地址: https://maicai.api.ddxq.mobi/order/checkOrder
+提交订单地址: https://maicai.api.ddxq.mobi/order/addNewOrder
+```
 
-- [iPhone获取用户参数](教程/获取用户参数/iphone.md)
-- [Android获取用户参数](教程/获取用户参数/android.md)
-- [Mac获取用户参数](教程/获取用户参数/mac.md)
-- [Windows获取用户参数](教程/获取用户参数/windows.md)
+## 1. 获取`Cookie`
 
-## 2. 填写用户参数
+- [iPhone获取`Cookie`](教程/cookie/iphone.md)
+- [Android获取`Cookie`](教程/cookie/android.md)
+- [Mac获取`Cookie`](教程/cookie/mac.md)
+- [Windows获取`Cookie`](教程/cookie/windows.md)
 
-- 请求头部的`Cookie`：填入`main.go` cookie参数中
+## 2. 填写`Cookie`
+
+- 将`Cookie`填入`main.go` cookie参数中
 
 ## 3. 运行
 

@@ -239,7 +239,7 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 		"freight_discount_money": orders.Order.FreightDiscountMoney,
 		"freight_money":          orders.Order.FreightMoney,
 		"freight_real_money":     orders.Order.FreightRealMoney,
-		"user_ticket_id":         orders.Order.DefaultCoupon["default_coupon"].Id,
+		//"user_ticket_id":         orders.Order.DefaultCoupon["default_coupon"].Id,
 	}, nil
 }
 

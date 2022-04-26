@@ -18,7 +18,8 @@
 
    ![](../images/stream/抓包历史.jpg)
 
-5. 点击全部请求页面右上角搜索，输入`cart/index`后确定, 如果搜索无结果，可以根据以下API的关键字搜索，如`api.ddxq.mobi`, `user/detail`, `user/address`, `allCheck`
+5. 点击全部请求页面右上角搜索，如果是旧版本例如`2.83.x`,可输入`cart/index`后确定。如果是新版本`2.85.x`，可以点击微信叮咚小程序`我的`-`收获地址`，搜索`user/address`(亲测有效)
+   。或者根据以下API的关键字搜索，如`api.ddxq.mobi`, `user/detail`, `user/address`, `allCheck`
    , `getMultiReserveTime`等
    ```
    获取用户信息: https://sunquan.api.ddxq.mobi/api/v1/user/detail/

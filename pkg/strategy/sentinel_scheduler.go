@@ -64,9 +64,9 @@ func (ss *SentinelScheduler) Schedule(ctx context.Context) error {
 	for !ss.o.Stop() {
 		time.Sleep(time.Duration(rand.Intn(ss.maxSleepMillis-ss.minSleepMillis)+ss.minSleepMillis) * time.Millisecond)
 		loopCount++
-		// 每循环抢菜60次就休会1-3分钟
-		if loopCount%60 == 0 {
-			time.Sleep(time.Duration(rand.Intn(60000)+2*60000) * time.Millisecond)
+		// 每循环抢菜60次就休会3-5分钟
+		if loopCount%30 == 0 {
+			time.Sleep(time.Duration(rand.Intn(3*60000)+2*60000) * time.Millisecond)
 		}
 
 		var err error

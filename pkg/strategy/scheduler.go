@@ -19,7 +19,6 @@ package strategy
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
@@ -100,15 +99,6 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 				}
 				// 购物车无可购买的商品
 				if cart == nil {
-					continue
-				}
-				if cart["total_money"] == nil {
-					bytes, err := json.Marshal(cart)
-					if err != nil {
-						klog.Errorf("解析购物车信息出错, 错误: %v", err)
-					} else {
-						klog.Infof("获取购物总金额出错，购物车无总金额参数, 详情: %s", string(bytes))
-					}
 					continue
 				}
 				money, err := strconv.ParseFloat(cart["total_money"].(string), 64)

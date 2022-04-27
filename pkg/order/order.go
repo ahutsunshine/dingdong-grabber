@@ -32,8 +32,9 @@ import (
 type Strategy int
 
 const (
-	ManualStrategy Strategy = 0 // 人工
-	TimingStrategy Strategy = 1 // 定时
+	ManualStrategy   Strategy = 0 // 人工
+	TimingStrategy   Strategy = 1 // 定时
+	SentinelStrategy Strategy = 2 // 哨兵
 )
 
 type Order struct {

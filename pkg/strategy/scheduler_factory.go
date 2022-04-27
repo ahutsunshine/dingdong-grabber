@@ -41,6 +41,8 @@ func (sf *schedulerFactory) Build(strategy int, u *user.User, baseTheadSize, sub
 		return NewManualScheduler(order.NewOrder(u, order.ManualStrategy), baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis, play, pushToken)
 	case 1: // 定时策略
 		return NewTimingScheduler(order.NewOrder(u, order.TimingStrategy), baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis, crons, play, pushToken)
+	case 2:
+		return NewSentinelScheduler(order.NewOrder(u, order.SentinelStrategy), minSleepMillis, maxSleepMillis, play, pushToken)
 	default:
 		klog.Fatalf("不支持此无效策略: %d", strategy)
 	}

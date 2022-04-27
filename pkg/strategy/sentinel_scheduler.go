@@ -40,11 +40,11 @@ type SentinelScheduler struct {
 
 func NewSentinelScheduler(o *order.Order, minSleepMillis, maxSleepMillis int, play bool, pushToken string) Interface {
 	if minSleepMillis < 5000 {
-		minSleepMillis = 5000
-		klog.Info("使用默认哨兵策略，每隔5-15s发起一起请求")
+		minSleepMillis = 10000
+		klog.Info("使用默认哨兵策略，每隔10-20s发起一起请求")
 	}
 	if maxSleepMillis <= minSleepMillis {
-		maxSleepMillis = minSleepMillis + 10000
+		maxSleepMillis = minSleepMillis + 20000
 	}
 
 	return &SentinelScheduler{
@@ -66,7 +66,7 @@ func (ss *SentinelScheduler) Schedule(ctx context.Context) error {
 		loopCount++
 		// 每循环抢菜60次就休会3-5分钟
 		if loopCount%30 == 0 {
-			time.Sleep(time.Duration(rand.Intn(3*60000)+2*60000) * time.Millisecond)
+			time.Sleep(time.Duration(rand.Intn(2*60000)+3*60000) * time.Millisecond)
 		}
 
 		var err error

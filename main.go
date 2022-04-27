@@ -78,7 +78,7 @@ func main() {
 	// 2. 构建实际调度策略
 	factory := schedule.NewSchedulerFactory()
 	scheduler := factory.Build(strategy, u, defaultBaseThreadSize, defaultSubmitOrderThreadSize,
-		defaultMinSleepMillis, defaultMaxSleepMillis, []string{"50 59 05 * * ?", "50 29 08 * * ?"}, play, pushToken)
+		defaultMinSleepMillis, defaultMaxSleepMillis, []string{"30 59 05 * * ?", "30 29 08 * * ?"}, play, pushToken)
 
 	// 3. 运行调度策略抢菜
 	if err := scheduler.Schedule(context.TODO()); err != nil {

@@ -80,13 +80,9 @@ type Orders struct {
 }
 
 type OrderDetail struct {
-	FreightDiscountMoney string            `json:"freight_discount_money"` // 配送费折扣
-	FreightMoney         string            `json:"freight_money"`          // 配送费
-	TotalMoney           string            `json:"total_money"`            // 订单总价格
-	FreightRealMoney     string            `json:"freight_real_money"`     // 最终的配送费
-	DefaultCoupon        map[string]Coupon `json:"default_coupon"`         // 购物券
-}
-
-type Coupon struct {
-	Id string `json:"_id"`
+	FreightDiscountMoney string                 `json:"freight_discount_money"` // 配送费折扣
+	FreightMoney         string                 `json:"freight_money"`          // 配送费
+	TotalMoney           string                 `json:"total_money"`            // 订单总价格
+	FreightRealMoney     string                 `json:"freight_real_money"`     // 最终的配送费
+	DefaultCoupon        map[string]interface{} `json:"default_coupon"`         // 购物券
 }

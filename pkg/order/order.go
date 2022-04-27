@@ -234,12 +234,25 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 	}
 
 	klog.Info("确认订单信息成功")
+	var ticketId = orders.Order.DefaultCoupon["default_coupon"]
+	if ticketId != nil {
+		switch ticketId.(type) {
+		case map[string]interface{}:
+			ticketId = ticketId.(map[string]interface{})["_id"]
+		case map[string]string:
+			ticketId = ticketId.(map[string]string)["_id"]
+		case map[interface{}]interface{}:
+			ticketId = ticketId.(map[interface{}]interface{})["_id"]
+		default:
+			ticketId = nil
+		}
+	}
 	return map[string]interface{}{
 		"total_money":            orders.Order.TotalMoney,
 		"freight_discount_money": orders.Order.FreightDiscountMoney,
 		"freight_money":          orders.Order.FreightMoney,
 		"freight_real_money":     orders.Order.FreightRealMoney,
-		//"user_ticket_id":         orders.Order.DefaultCoupon["default_coupon"].Id,
+		"user_ticket_id":         ticketId,
 	}, nil
 }
 

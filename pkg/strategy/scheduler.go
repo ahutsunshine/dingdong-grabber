@@ -47,7 +47,7 @@ type Scheduler struct {
 func (s *Scheduler) Run(ctx context.Context) {
 	go func() {
 		var (
-			deadline = time.After(120 * time.Second)
+			deadline = time.After(180 * time.Second)
 			ticker   = time.NewTicker(3 * time.Second)
 		)
 		defer ticker.Stop()

@@ -27,6 +27,7 @@ import (
 
 	"github.com/dingdong-grabber/pkg/notice"
 	"github.com/dingdong-grabber/pkg/order"
+	"github.com/dingdong-grabber/pkg/util"
 	"k8s.io/klog"
 )
 
@@ -40,11 +41,11 @@ type SentinelScheduler struct {
 
 func NewSentinelScheduler(o *order.Order, minSleepMillis, maxSleepMillis int, play bool, pushToken string) Interface {
 	if minSleepMillis < 5000 {
-		minSleepMillis = 10000
-		klog.Info("使用默认哨兵策略，每隔10-20s发起一起请求")
+		minSleepMillis = 15000
+		klog.Info("使用默认哨兵策略，每隔15-30s发起一起请求")
 	}
 	if maxSleepMillis <= minSleepMillis {
-		maxSleepMillis = minSleepMillis + 20000
+		maxSleepMillis = minSleepMillis + 30000
 	}
 
 	return &SentinelScheduler{
@@ -64,9 +65,9 @@ func (ss *SentinelScheduler) Schedule(ctx context.Context) error {
 	for !ss.o.Stop() {
 		time.Sleep(time.Duration(rand.Intn(ss.maxSleepMillis-ss.minSleepMillis)+ss.minSleepMillis) * time.Millisecond)
 		loopCount++
-		// 每循环抢菜60次就休会3-5分钟
+		// 每循环抢菜60次就休会5-10分钟
 		if loopCount%30 == 0 {
-			time.Sleep(time.Duration(rand.Intn(2*60000)+3*60000) * time.Millisecond)
+			time.Sleep(time.Duration(rand.Intn(5*60000)+5*60000) * time.Millisecond)
 		}
 
 		var err error
@@ -178,6 +179,8 @@ func (ss *SentinelScheduler) Schedule(ctx context.Context) error {
 				}
 			}
 		}
+
+		util.ClearSignFile()
 
 		// 休眠30s, 让音乐飞一会
 		time.Sleep(time.Second * 30)

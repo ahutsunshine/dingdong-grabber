@@ -18,12 +18,16 @@ under the License.
 package sign
 
 import (
+	"bytes"
+	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"os"
+	"net/http"
+	"net/url"
+	"strings"
 
-	"github.com/robertkrimen/otto"
+	"github.com/dingdong-grabber/pkg/constants"
+	"github.com/dingdong-grabber/pkg/util"
 	"k8s.io/klog"
 )
 
@@ -31,41 +35,84 @@ type JsSign struct {
 	file string
 }
 
-func NewDefaultJsSign() SignInterface {
-	dir, err := os.Getwd()
+func NewDefaultJsSign() (SignInterface, error) {
+	data, err := util.SignFile()
 	if err != nil {
 		klog.Fatal(err)
 	}
-	return NewSign(fmt.Sprintf("%s%s", dir, "/sign.js"))
-}
 
-func NewSign(file string) SignInterface {
-	return &JsSign{
-		file: file,
+	resp, err := rawRequest(constants.SignSwitch, http.MethodGet, map[string]string{
+		"user-agent": "axios/0.29.0",
+	}, nil, nil)
+
+	if err != nil {
+		return nil, err
 	}
-}
-
-func (s *JsSign) Sign(data interface{}) (map[string]string, error) {
-	bytes, err := ioutil.ReadFile(s.file)
+	sign, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		klog.Error(err)
 		return nil, err
 	}
-	vm := otto.New()
-	if _, err = vm.Run(string(bytes)); err != nil {
-		klog.Error(err)
+	signStr := strings.TrimSuffix(string(sign), ";")
+
+	data = strings.ReplaceAll(data, "${SIGN}", signStr)
+	tmp, _ := util.SignConfigFilePath()
+	s := &JsSign{
+		file: tmp,
+	}
+	if err = s.Write([]byte(data)); err != nil {
 		return nil, err
 	}
-	bytes, _ = json.Marshal(data)
-	value, err := vm.Call("sign", nil, string(bytes))
+	return s, nil
+}
+
+func rawRequest(url, method string, header map[string]string, params url.Values, body []byte) (*http.Response, error) {
+	req, err := http.NewRequest(method, url, bytes.NewReader(body))
 	if err != nil {
 		klog.Error(err)
 		return nil, err
 	}
-	var signs map[string]string
-	if err = json.Unmarshal([]byte(value.String()), &signs); err != nil {
-		klog.Errorf("解析签名结果出错，错误: %v", err)
+	if len(params) > 0 {
+		req.URL.RawQuery = params.Encode()
+	}
+	var client = &http.Client{}
+	for k, v := range header {
+		req.Header.Add(k, v)
+	}
+
+	if req.URL.Scheme == "https" {
+		client = &http.Client{
+			Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
+		}
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		klog.Error(err)
 		return nil, err
 	}
-	return signs, nil
+	return resp, nil
+}
+
+func (s *JsSign) Write(data []byte) error {
+	return ioutil.WriteFile(s.file, data, 0666)
+}
+
+func (s *JsSign) Sign(secret string, data interface{}) (map[string]string, error) {
+	bytes, _ := json.Marshal(data)
+	out, err := Exec("node", []string{
+		s.file,
+		secret,
+		string(bytes),
+	})
+	if err != nil {
+		klog.Error(err)
+		return nil, err
+	}
+	var sign map[string]string
+	if err = json.Unmarshal([]byte(out), &sign); err != nil {
+		klog.Error(err)
+		return nil, err
+	}
+	return sign, nil
 }

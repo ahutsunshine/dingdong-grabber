@@ -1,0 +1,29 @@
+curl --location --request GET 'https://sunquan.api.ddxq.mobi/api/v1/user/detail/?api_version=9.50.2&app_client_id=1&app_type=&buildVersion=1232&channel=App%20Store&city_number=0101&countryCode=CN&device_id=fb36b852fc8167e8a27f719b0a79a92302ab95e2&device_model=iPhone11%2C8&device_name=iPhone%20XR&device_token=BHkgLTQOVdmg0NUrX/1O5umYPg%2BodvQl77jZNUlpymJhPbgnIyc%2Bo9ACd55VGntFkt0GcurW%2BeD3PAp8GScliPQ%3D%3D&idfa=&ip=&languageCode=zh&latitude=31.200879&localeIdentifier=zh_CN&longitude=121.553&os_version=15.5&seqid=613302504&sign=aabe840b40158253e983c7d9185163d8&source_type=mine_page&station_id=5cda2044716de103418b456a&time=1651415709&uid=611477235be794000133f3ab' \
+--header 'Host: sunquan.api.ddxq.mobi' \
+--header 'Cookie: DDXQSESSID=6vd7ug21d12d56y0562177uv4924gg21welpk369v67807t2kypf433j1s5hk926' \
+--header 'ddmc-city-number: 0101' \
+--header 'nars: aRk5ed70c36dbabb9b1ab19a3405fecdcf7d4f065e18a86bc4b7dd688285b' \
+--header 'time: 1651415709,d92511c512c883d590e6591e4b1ba0fe' \
+--header 'ddmc-locale-identifier: zh_CN' \
+--header 'user-agent: neighborhood/9.50.2 (iPhone; iOS 15.5; Scale/2.00)' \
+--header 'ddmc-device-token: BHkgLTQOVdmg0NUrX/1O5umYPg+odvQl77jZNUlpymJhPbgnIyc+o9ACd55VGntFkt0GcurW+eD3PAp8GScliPQ==' \
+--header 'ddmc-api-version: 9.50.2' \
+--header 'ddmc-build-version: 1232' \
+--header 'ddmc-idfa;' \
+--header 'ddmc-longitude: 121.553' \
+--header 'ddmc-latitude: 31.200879' \
+--header 'sesi: `cd95ecea10672a658827f553b951445a14ecbf6664c1vlxbPh' \
+--header 'ddmc-app-client-id: 1' \
+--header 'sign: aabe840b40158253e983c7d9185163d8' \
+--header 'ddmc-device-name: iPhone XR' \
+--header 'ddmc-uid: 611477235be794000133f3ab' \
+--header 'accept-language: zh-Hans-CN;q=1, en-CN;q=0.9' \
+--header 'ddmc-device-model: iPhone11,8' \
+--header 'ddmc-channel: App Store' \
+--header 'ddmc-device-id: fb36b852fc8167e8a27f719b0a79a92302ab95e2' \
+--header 'ddmc-country-code: CN' \
+--header 'ddmc-ip;' \
+--header 'ddmc-station-id: 5cda2044716de103418b456a' \
+--header 'ddmc-language-code: zh' \
+--header 'accept: */*' \
+--header 'ddmc-os-version: 15.5'

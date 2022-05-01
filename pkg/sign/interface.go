@@ -18,5 +18,5 @@ under the License.
 package sign
 
 type SignInterface interface {
-	Sign(data interface{}) (map[string]string, error)
+	Sign(secret string, data interface{}) (map[string]string, error)
 }

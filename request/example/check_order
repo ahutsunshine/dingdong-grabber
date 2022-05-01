@@ -1,0 +1,31 @@
+curl --location --request POST 'https://maicai.api.ddxq.mobi/order/checkOrder' \
+--header 'Host: maicai.api.ddxq.mobi' \
+--header 'Cookie: DDXQSESSID=6vd7ug21d12d56y0562177uv4924gg21welpk369v67807t2kypf433j1s5hk926' \
+--header 'ddmc-os-version: 15.5' \
+--header 'ddmc-city-number: 0101' \
+--header 'nars: nUiec6323d0f2bd2c782cbe5f314ada133f33388506a18b58b399845f310f' \
+--header 'time: 1651415626,1c8342ede20a23a5577127c2d959e379' \
+--header 'ddmc-locale-identifier: zh_CN' \
+--header 'user-agent: neighborhood/9.50.2 (iPhone; iOS 15.5; Scale/2.00)' \
+--header 'ddmc-device-token: BHkgLTQOVdmg0NUrX/1O5umYPg+odvQl77jZNUlpymJhPbgnIyc+o9ACd55VGntFkt0GcurW+eD3PAp8GScliPQ==' \
+--header 'ddmc-api-version: 9.50.2' \
+--header 'ddmc-build-version: 1232' \
+--header 'ddmc-idfa;' \
+--header 'ddmc-longitude: 121.553' \
+--header 'ddmc-latitude: 31.200879' \
+--header 'sesi: 4gc395b91dc41f711d8996b84bfaffd8dd257888f8311xvztmF' \
+--header 'ddmc-app-client-id: 1' \
+--header 'sign: 85fb286e03f56b57e946475423af2471' \
+--header 'ddmc-device-name: iPhone XR' \
+--header 'ddmc-uid: 611477235be794000133f3ab' \
+--header 'accept-language: zh-Hans-CN;q=1, en-CN;q=0.9' \
+--header 'ddmc-device-model: iPhone11,8' \
+--header 'ddmc-channel: App Store' \
+--header 'ddmc-country-code: CN' \
+--header 'ddmc-device-id: fb36b852fc8167e8a27f719b0a79a92302ab95e2' \
+--header 'ddmc-ip;' \
+--header 'content-type: application/x-www-form-urlencoded' \
+--header 'ddmc-station-id: 5cda2044716de103418b456a' \
+--header 'ddmc-language-code: zh' \
+--header 'accept: */*' \
+--data-raw 'ab_config=%7B%22ETA_time_default_selection%22%3A%22D1.2%22%7D&address_id=6258293f0cb1a3000167ba35&api_version=9.50.2&app_client_id=1&app_type=&buildVersion=1232&channel=App%20Store&check_order_type=0&city_number=0101&countryCode=CN&coupons_id=&device_id=fb36b852fc8167e8a27f719b0a79a92302ab95e2&device_model=iPhone11%2C8&device_name=iPhone%20XR&device_token=BHkgLTQOVdmg0NUrX/1O5umYPg%2BodvQl77jZNUlpymJhPbgnIyc%2Bo9ACd55VGntFkt0GcurW%2BeD3PAp8GScliPQ%3D%3D&freight_ticket_id=default&idfa=&ip=&is_buy_coupons=0&is_buy_vip=0&is_use_balance=1&is_use_point=0&languageCode=zh&latitude=31.200879&localeIdentifier=zh_CN&longitude=121.553&os_version=15.5&packages=%5B%7B%22reserved_time%22%3A%7B%22time_biz_type%22%3A0%7D%2C%22real_match_supply_order%22%3Afalse%2C%22is_supply_order%22%3Afalse%2C%22package_type%22%3A1%2C%22package_id%22%3A1%2C%22products%22%3A%5B%7B%22id%22%3A%22625e6035929609dd27fc2111%22%2C%22is_booking%22%3A0%2C%22total_money%22%3A%22168.00%22%2C%22is_invoice%22%3Atrue%2C%22total_origin_money%22%3A%22168.00%22%2C%22category_path%22%3A%22%22%2C%22count%22%3A1%2C%22type%22%3A1%2C%22batch_type%22%3A-1%2C%22is_coupon_gift%22%3A0%2C%22price%22%3A%22168.00%22%2C%22order_sort%22%3A%223%22%2C%22instant_rebate_money%22%3A%220.00%22%2C%22activity_id%22%3A%22%22%2C%22conditions_num%22%3A%22%22%2C%22price_type%22%3A%220%22%2C%22product_type%22%3A0%2C%22origin_price%22%3A%22168.00%22%7D%2C%7B%22id%22%3A%225ad9a3ddc0a1ea4f0f8b472e%22%2C%22is_booking%22%3A0%2C%22total_money%22%3A%2226.80%22%2C%22is_invoice%22%3Atrue%2C%22total_origin_money%22%3A%2226.80%22%2C%22category_path%22%3A%2258f9e5b3936edfe3568b5742%2C5b0ffb4545cd42444e8c837f%22%2C%22count%22%3A1%2C%22type%22%3A1%2C%22batch_type%22%3A-1%2C%22is_coupon_gift%22%3A0%2C%22price%22%3A%2226.80%22%2C%22order_sort%22%3A%2211%22%2C%22instant_rebate_money%22%3A%220.00%22%2C%22activity_id%22%3A%22%22%2C%22conditions_num%22%3A%22%22%2C%22price_type%22%3A%220%22%2C%22product_type%22%3A0%2C%22origin_price%22%3A%2226.80%22%7D%5D%7D%5D&seqid=613302497&sign=85fb286e03f56b57e946475423af2471&station_id=5cda2044716de103418b456a&time=1651415626&uid=611477235be794000133f3ab&user_ticket_id=default'

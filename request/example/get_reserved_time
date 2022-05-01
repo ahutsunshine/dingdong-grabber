@@ -1,0 +1,31 @@
+curl --location --request POST 'https://maicai.api.ddxq.mobi/order/getMultiReserveTime' \
+--header 'Host: maicai.api.ddxq.mobi' \
+--header 'Cookie: DDXQSESSID=6vd7ug21d12d56y0562177uv4924gg21welpk369v67807t2kypf433j1s5hk926' \
+--header 'ddmc-os-version: 15.5' \
+--header 'ddmc-city-number: 0101' \
+--header 'nars: DeR8c4091686d34c734b9fe36c0221570d060c5c03529916265f227a42b7f' \
+--header 'time: 1651415216,715376119e2f07f7d2680f30ca31743c' \
+--header 'ddmc-locale-identifier: zh_CN' \
+--header 'user-agent: neighborhood/9.50.2 (iPhone; iOS 15.5; Scale/2.00)' \
+--header 'ddmc-device-token: BHkgLTQOVdmg0NUrX/1O5umYPg+odvQl77jZNUlpymJhPbgnIyc+o9ACd55VGntFkt0GcurW+eD3PAp8GScliPQ==' \
+--header 'ddmc-api-version: 9.50.2' \
+--header 'ddmc-build-version: 1232' \
+--header 'ddmc-idfa;' \
+--header 'ddmc-longitude: 121.553' \
+--header 'ddmc-latitude: 31.200879' \
+--header 'sesi: `7207cb7d6acb0fdfb96cd201e17c0c02e12e587f79aaQeEb1v' \
+--header 'ddmc-app-client-id: 1' \
+--header 'sign: 3a6316ce96a50a2e4aea2514ece1ab2e' \
+--header 'ddmc-device-name: iPhone XR' \
+--header 'ddmc-uid: 611477235be794000133f3ab' \
+--header 'accept-language: zh-Hans-CN;q=1, en-CN;q=0.9' \
+--header 'ddmc-device-model: iPhone11,8' \
+--header 'ddmc-channel: App Store' \
+--header 'ddmc-country-code: CN' \
+--header 'ddmc-device-id: fb36b852fc8167e8a27f719b0a79a92302ab95e2' \
+--header 'ddmc-ip;' \
+--header 'content-type: application/x-www-form-urlencoded' \
+--header 'ddmc-station-id: 5cda2044716de103418b456a' \
+--header 'ddmc-language-code: zh' \
+--header 'accept: */*' \
+--data-raw 'ab_config=%7B%22ETA_time_default_selection%22%3A%22D1.2%22%7D&address_id=6258293f0cb1a3000167ba35&api_version=9.50.2&app_client_id=1&app_type=&buildVersion=1232&channel=App%20Store&city_number=0101&countryCode=CN&device_id=fb36b852fc8167e8a27f719b0a79a92302ab95e2&device_model=iPhone11%2C8&device_name=iPhone%20XR&device_token=BHkgLTQOVdmg0NUrX/1O5umYPg%2BodvQl77jZNUlpymJhPbgnIyc%2Bo9ACd55VGntFkt0GcurW%2BeD3PAp8GScliPQ%3D%3D&idfa=&ip=&languageCode=zh&latitude=31.200879&localeIdentifier=zh_CN&longitude=121.553&os_version=15.5&products=%5B%22%5B%7B%5C%22sale_batches%5C%22%3A%7B%5C%22batch_type%5C%22%3A-1%7D%2C%5C%22is_coupon_gift%5C%22%3A0%2C%5C%22id%5C%22%3A%5C%22625e6035929609dd27fc2111%5C%22%2C%5C%22price%5C%22%3A%5C%22168.00%5C%22%2C%5C%22is_booking%5C%22%3A0%2C%5C%22count%5C%22%3A1%2C%5C%22small_image%5C%22%3A%5C%22https%3A%5C%5C%5C/%5C%5C%5C/imgnew.ddimg.mobi%5C%5C%5C/product%5C%5C%5C/cfd9e562ede1424caf60a9776fc41587.jpg?width%3D800%26height%3D800%5C%22%2C%5C%22type%5C%22%3A1%2C%5C%22origin_price%5C%22%3A%5C%22168.00%5C%22%2C%5C%22product_type%5C%22%3A0%2C%5C%22product_name%5C%22%3A%5C%22%E3%80%90%E5%AE%B6%E5%BA%AD%E7%9C%81%E5%BF%83%E5%A5%97%E9%A4%90%E3%80%91%E7%9B%98%E7%82%B9%E7%BE%8E%E5%91%B3%E5%86%B7%E5%86%BB%E9%A2%84%E5%88%B6%E8%8F%9C%E5%A5%97%E9%A4%902.35kg%20%EF%BC%888%E4%BB%B6%EF%BC%89%5C%22%7D%2C%7B%5C%22sale_batches%5C%22%3A%7B%5C%22batch_type%5C%22%3A-1%7D%2C%5C%22is_coupon_gift%5C%22%3A0%2C%5C%22id%5C%22%3A%5C%225ad9a3ddc0a1ea4f0f8b472e%5C%22%2C%5C%22price%5C%22%3A%5C%2226.80%5C%22%2C%5C%22is_booking%5C%22%3A0%2C%5C%22count%5C%22%3A1%2C%5C%22small_image%5C%22%3A%5C%22https%3A%5C%5C%5C/%5C%5C%5C/img.ddimg.mobi%5C%5C%5C/product%5C%5C%5C/c6aef64986e931608538692878.jpg?width%3D800%26height%3D800%5C%22%2C%5C%22type%5C%22%3A1%2C%5C%22origin_price%5C%22%3A%5C%2226.80%5C%22%2C%5C%22product_type%5C%22%3A0%2C%5C%22product_name%5C%22%3A%5C%22%E8%8D%B7%E7%BE%8E%E5%B0%94%E8%B6%85%E5%80%BC%E7%B2%BE%E9%80%89%E5%9F%B9%E6%A0%B9%20150g%5C%5C%5C/%E8%A2%8B%5C%22%7D%5D%22%5D&seqid=613302493&sign=3a6316ce96a50a2e4aea2514ece1ab2e&station_id=5cda2044716de103418b456a&time=1651415216&uid=611477235be794000133f3ab'

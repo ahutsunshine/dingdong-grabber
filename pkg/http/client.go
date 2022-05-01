@@ -139,22 +139,31 @@ func checkSuccess(resp *Response) (*Response, error) {
 }
 
 func (c *Client) Get(header map[string]string, params url.Values) (*Response, error) {
-	if err := c.Sign(params); err != nil {
+	if err := c.Sign(header[constants.ImSecret], params); err != nil {
 		return nil, err
 	}
 	return c.request(http.MethodGet, header, params)
 }
 
 func (c *Client) Post(header map[string]string, params url.Values) (*Response, error) {
-	if err := c.Sign(params); err != nil {
+	if err := c.Sign(header[constants.ImSecret], params); err != nil {
 		return nil, err
 	}
 	return c.requestForm(http.MethodPost, header, params)
 }
 
+func (c *Client) RawGet(header map[string]string, params url.Values) (*http.Response, error) {
+	return c.rawRequest(http.MethodGet, header, params, nil)
+}
+
 func (c *Client) RawPost(header map[string]string, params url.Values, body []byte) (*http.Response, error) {
-	req, err := http.NewRequest(http.MethodPost, c.Url(), bytes.NewReader(body))
+	return c.rawRequest(http.MethodPost, header, params, body)
+}
+
+func (c *Client) rawRequest(method string, header map[string]string, params url.Values, body []byte) (*http.Response, error) {
+	req, err := http.NewRequest(method, c.Url(), bytes.NewReader(body))
 	if err != nil {
+		klog.Error(err)
 		return nil, err
 	}
 	if len(params) > 0 {
@@ -185,12 +194,17 @@ func (c *Client) SetBody(body url.Values, params map[string]string) {
 	}
 }
 
-func (c *Client) Sign(body url.Values) error {
-	signs, err := sign.NewDefaultJsSign().Sign(body)
+func (c *Client) Sign(secret string, body url.Values) error {
+	s, err := sign.NewDefaultJsSign()
+	if err != nil {
+		return err
+	}
+	signs, err := s.Sign(secret, body)
 	if err != nil {
 		return err
 	}
 	body[constants.SignNars] = []string{signs[constants.SignNars]}
 	body[constants.SignSesi] = []string{signs[constants.SignSesi]}
+	body[constants.Sign] = []string{signs[constants.Sign]}
 	return nil
 }

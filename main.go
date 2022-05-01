@@ -20,9 +20,13 @@ package main
 import (
 	"context"
 	"flag"
+	"os"
+	"os/signal"
+	"syscall"
 
 	schedule "github.com/dingdong-grabber/pkg/strategy"
 	"github.com/dingdong-grabber/pkg/user"
+	"github.com/dingdong-grabber/pkg/util"
 	"k8s.io/klog"
 )
 
@@ -49,7 +53,7 @@ const (
 	// 必须填写用户cookie， cookie代表人的身份
 	cookie = "" // 请求头部的Cookie
 
-	// pushplus token用于推送下单成功消息, http://www.pushplus.plus
+	// 可选参数，可不填。pushplus token用于推送下单成功消息, http://www.pushplus.plus
 	pushToken = ""
 )
 
@@ -69,6 +73,14 @@ func main() {
 	// 1: 播放
 	flag.BoolVar(&play, "play", true, "抢菜成功后播放音乐通知用户")
 	setDefault()
+
+	stopChan := make(chan os.Signal, 1)
+	signal.Notify(stopChan, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-stopChan
+		util.ClearSignConfigFile()
+		os.Exit(1)
+	}()
 
 	// 1. 初始化用户必须的参数数据
 	u := user.NewDefaultUser()

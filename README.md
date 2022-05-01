@@ -4,9 +4,12 @@
 
 经过本人和身边朋友亲测，事先(最好在凌晨12点左右)将菜品放入购物车，在6:00前或者8:30前运行程序是可以抢到的。
 
-# 新的抢菜方案
+# 05-01 重大更新
 
-最近使用者反应自身账号受到了风控，基于旧版本的抓取的HTTP接口抓取可能已经成为过去式了。恰逢五一放假，准备研究研究新的抢菜方案，擅长这方面的童鞋欢迎一起在`Issues`里讨论。
+本次更新兼容了叮咚小程序最新版本`9.50.2`，参考了[Runc2333](https://github.com/Runc2333)和[IMLR](https://github.com/IMLR)提供的签名算法，同时感谢
+[longIvan](https://github.com/longIvan)和[dodobel](https://github.com/dodobel)两位童鞋的帮忙和协作。
+
+- **需要安装`node.js`环境**: https://www.runoob.com/nodejs/nodejs-install-setup.html
 
 # 04-26 抢菜更新
 

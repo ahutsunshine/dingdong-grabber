@@ -2,3 +2,4 @@
 coverage.txt
 .build
 vendor
+./sign_config.js

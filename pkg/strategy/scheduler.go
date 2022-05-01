@@ -179,7 +179,7 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 						}
 					}
 				}
-				util.ClearSignFile()
+				util.ClearSignConfigFile()
 				// 休眠30s, 让音乐飞一会
 				time.Sleep(time.Second * 30)
 

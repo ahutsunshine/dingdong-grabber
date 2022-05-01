@@ -1,0 +1,31 @@
+curl --location --request POST 'https://maicai.api.ddxq.mobi/cart/allCheck' \
+--header 'Host: maicai.api.ddxq.mobi' \
+--header 'Cookie: DDXQSESSID=6vd7ug21d12d56y0562177uv4924gg21welpk369v67807t2kypf433j1s5hk926' \
+--header 'ddmc-os-version: 15.5' \
+--header 'ddmc-city-number: 0101' \
+--header 'nars: V6Hb89deba9a6b9147ee63e3faf1d5c07de4577fb69013fd5e52d6e777310' \
+--header 'time: 1651415509,23fceb835320a6c61378a85aa87a1f14' \
+--header 'ddmc-locale-identifier: zh_CN' \
+--header 'user-agent: neighborhood/9.50.2 (iPhone; iOS 15.5; Scale/2.00)' \
+--header 'ddmc-device-token: BHkgLTQOVdmg0NUrX/1O5umYPg+odvQl77jZNUlpymJhPbgnIyc+o9ACd55VGntFkt0GcurW+eD3PAp8GScliPQ==' \
+--header 'ddmc-api-version: 9.50.2' \
+--header 'ddmc-build-version: 1232' \
+--header 'ddmc-idfa;' \
+--header 'ddmc-longitude: 121.553' \
+--header 'ddmc-latitude: 31.200879' \
+--header 'sesi: 47c1188d7a171524944316de440d9aff8f50e3af16924erC9tk' \
+--header 'ddmc-app-client-id: 1' \
+--header 'sign: 056b00965b983cba108604f44dda49c5' \
+--header 'ddmc-uid: 611477235be794000133f3ab' \
+--header 'ddmc-device-name: iPhone XR' \
+--header 'accept-language: zh-Hans-CN;q=1, en-CN;q=0.9' \
+--header 'ddmc-device-model: iPhone11,8' \
+--header 'ddmc-channel: App Store' \
+--header 'ddmc-country-code: CN' \
+--header 'ddmc-device-id: fb36b852fc8167e8a27f719b0a79a92302ab95e2' \
+--header 'ddmc-ip;' \
+--header 'content-type: application/x-www-form-urlencoded' \
+--header 'ddmc-station-id: 5cda2044716de103418b456a' \
+--header 'ddmc-language-code: zh' \
+--header 'accept: */*' \
+--data-raw 'ab_config=%7B%22key_no_condition_barter%22%3Atrue%2C%22key_cart_discount_price%22%3A%22C%22%2C%22key_show_cart_barter%22%3A%220%22%7D&api_version=9.50.2&app_client_id=1&app_type=&buildVersion=1232&channel=App%20Store&city_number=0101&countryCode=CN&device_id=fb36b852fc8167e8a27f719b0a79a92302ab95e2&device_model=iPhone11%2C8&device_name=iPhone%20XR&device_token=BHkgLTQOVdmg0NUrX/1O5umYPg%2BodvQl77jZNUlpymJhPbgnIyc%2Bo9ACd55VGntFkt0GcurW%2BeD3PAp8GScliPQ%3D%3D&idfa=&ip=&is_check=0&is_filter=0&is_load=1&languageCode=zh&latitude=31.200879&localeIdentifier=zh_CN&longitude=121.553&os_version=15.5&seqid=613302496&sign=056b00965b983cba108604f44dda49c5&station_id=5cda2044716de103418b456a&time=1651415509&uid=611477235be794000133f3ab'

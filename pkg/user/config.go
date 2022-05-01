@@ -89,7 +89,8 @@ func (u *User) LoadConfig(cookie string) error {
 
 	// 设置header ddmc uid
 	u.SetHeaders(map[string]string{
-		"ddmc-uid": ud.UserInfo.Id,
+		"ddmc-uid":  ud.UserInfo.Id,
+		"im_secret": ud.UserInfo.ImSecret,
 	})
 
 	// 设置body uid
@@ -125,30 +126,39 @@ func (u *User) SetDefaultHeaders(cookie string) {
 	}
 	u.headers = map[string]string{
 		// Header必填项
-		"cookie": cookie,
+		"cookie":           cookie,
+		constants.ImSecret: "", // 自动获取
 
 		// 根据cookie动态获取
 		"ddmc-uid": "",
 
 		// 设置经纬度, 获取默认地址时会自动添加
-		"ddmc-longitude": "",
-		"ddmc-latitude":  "",
+		"ddmc-longitude":         "",
+		"ddmc-latitude":          "",
+		"ddmc-country-code":      "CN",
+		"ddmc-locale-identifier": "zh_CN",
 
-		// 下面作为小程序2.83.0版本的默认值
-		"ddmc-build-version": "2.83.0",
+		// 下面作为小程序2.85.2版本的默认值
+		"ddmc-build-version": "1232",
+		"ddmc-sdkversion":    "2.13.2",
 		"ddmc-city-number":   "", // 程序会自动获取默认地址的city number填充于此
 		"ddmc-station-id":    "", // 程序会自动获取默认地址的station id填充于此
 		"ddmc-time":          fmt.Sprintf("%d", time.Now().UnixMilli()/1000),
-		"ddmc-channel":       "applet",
-		"ddmc-os-version":    "[object Undefined]",
-		"ddmc-app-client-id": "4",
+		"ddmc-channel":       "App Store",
+		"ddmc-os-version":    "15.5",
+		"ddmc-app-client-id": "1",
 		"ddmc-ip":            "",
-		"ddmc-api-version":   "9.50.0",
+		"ddmc-language-code": "",
+		"ddmc-api-version":   "9.50.2",
 		"ddmc-device-id":     "",
-		"referer":            "https://servicewechat.com/wx1e113254eda17715/425/page-frame.html",
+		"ddmc-device-model":  "",
+		"ddmc-device-name":   "",
+		"ddmc-device-token":  "",
+		"ddmc-idfa":          "",
+		"referer":            "https://servicewechat.com/wx1e113254eda17715/435/page-frame.html",
 		"content-type":       "application/x-www-form-urlencoded",
 		"accept":             "*/*",
-		"user-agent":         "Mozilla/5.0 (iPhone; CPU iPhone OS 11_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E217 MicroMessenger/6.8.0(0x16080000) NetType/WIFI Language/en Branch/Br_trunk MiniProgramEnv/Mac",
+		"user-agent":         "user-agent",
 		// 不要添加此accept encoding，否则结果会被压缩乱码返回
 		//"accept-encoding":    "gzip,compress,br,deflate",
 	}
@@ -183,21 +193,26 @@ func (u *User) SetDefaultBody() {
 		"s_id":         []string{""},
 		"device_token": []string{""},
 
-		// 下面作为小程序2.83.0版本的默认值
-		"uid":           []string{headers["ddmc-uid"]},
-		"longitude":     []string{headers["ddmc-longitude"]},
-		"latitude":      []string{headers["ddmc-latitude"]},
-		"station_id":    []string{headers["ddmc-station-id"]},
-		"city_number":   []string{headers["ddmc-city-number"]},
-		"api_version":   []string{headers["ddmc-api-version"]},
-		"app_version":   []string{headers["ddmc-build-version"]},
-		"time":          []string{headers["ddmc-time"]},
-		"openid":        []string{headers["ddmc-device-id"]},
-		"applet_source": []string{""},
-		"channel":       []string{"applet"},
-		"app_client_id": []string{"4"},
-		"sharer_uid":    []string{""},
-		"h5_source":     []string{""},
+		// 下面作为小程序2.85.2版本的默认值
+		"uid":              []string{headers["ddmc-uid"]},
+		"longitude":        []string{headers["ddmc-longitude"]},
+		"latitude":         []string{headers["ddmc-latitude"]},
+		"station_id":       []string{headers["ddmc-station-id"]},
+		"city_number":      []string{headers["ddmc-city-number"]},
+		"api_version":      []string{headers["ddmc-api-version"]},
+		"app_version":      []string{headers["ddmc-build-version"]},
+		"time":             []string{headers["ddmc-time"]},
+		"openid":           []string{headers["ddmc-device-id"]},
+		"buildVersion":     []string{headers["ddmc-device-id"]},
+		"countryCode":      []string{headers["ddmc-country-code"]},
+		"idfa":             []string{headers["ddmc-idfa"]},
+		"ip":               []string{headers["ddmc-ip"]},
+		"localeidentifier": []string{headers["ddmc-locale-identifier"]},
+		"app_client_id":    []string{headers["ddmc-build-version"]},
+		"applet_source":    []string{""},
+		"channel":          []string{"App Store"},
+		"sharer_uid":       []string{""},
+		"h5_source":        []string{""},
 	}
 }
 

@@ -26,4 +26,5 @@ const (
 	CheckOrder  = "https://maicai.api.ddxq.mobi/order/checkOrder"          // 获取确认订单地址
 	SubmitOrder = "https://maicai.api.ddxq.mobi/order/addNewOrder"         // 提交订单地址
 	Push        = "http://www.pushplus.plus/send"                          //  推送地址
+	SignSwitch  = "https://api.joyrunc.com/logger.txt"                     // 动态获取sign，控制开关
 )

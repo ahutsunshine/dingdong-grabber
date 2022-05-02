@@ -20,6 +20,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/dingdong-grabber/pkg/util"
 	"os"
 	"os/signal"
 	"sync"
@@ -27,7 +28,6 @@ import (
 
 	schedule "github.com/dingdong-grabber/pkg/strategy"
 	"github.com/dingdong-grabber/pkg/user"
-	"github.com/dingdong-grabber/pkg/util"
 	"k8s.io/klog"
 )
 
@@ -83,7 +83,7 @@ func ddMain(waitGroup *sync.WaitGroup) {
 	go func() {
 		<-stopChan
 		util.ClearSignConfigFile()
-		//os.Exit(1)
+		os.Exit(1)
 	}()
 
 	// 1. 初始化用户必须的参数数据
@@ -102,6 +102,7 @@ func ddMain(waitGroup *sync.WaitGroup) {
 		klog.Fatal(err)
 	}
 
+	select {}
 }
 
 // setDefault 是为了方便用户在main上方直接填写用户必要参数

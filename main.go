@@ -20,19 +20,15 @@ package main
 import (
 	"context"
 	"flag"
-	"os"
-	"os/signal"
-	"syscall"
 
 	schedule "github.com/dingdong-grabber/pkg/strategy"
 	"github.com/dingdong-grabber/pkg/user"
-	"github.com/dingdong-grabber/pkg/util"
 	"k8s.io/klog"
 )
 
 const (
-	defaultBaseThreadSize        = 2   // 默认基础信息执行线程数
-	defaultSubmitOrderThreadSize = 4   // 默认提交订单执行线程数
+	defaultBaseThreadSize        = 2   // 默认基础信息执行线程数, 建议不要超过2，否则容易被风控
+	defaultSubmitOrderThreadSize = 2   // 默认提交订单执行线程数, 建议不要超过2，否则容易被风控
 	defaultMinSleepMillis        = 300 // 默认抢菜最小时间间隔 300ms
 	defaultMaxSleepMillis        = 500 // 默认抢菜最大时间间隔 500ms
 
@@ -63,24 +59,18 @@ var (
 	play bool
 )
 
-// 应用小程序版本：2.83.0
+// 更新兼容叮咚微信小程序版本：2.85.2
+
 func main() {
 	flag.StringVar(&c, "cookie", "", "请求头部的Cookie")
 	flag.IntVar(&sy, "strategy", 1, "设置抢菜策略")
-
 	// 抢菜成功后是否播放《Everything I Need》通知用户
-	// 0: 不播放
-	// 1: 播放
+	// false: 不播放
+	// true: 播放
 	flag.BoolVar(&play, "play", true, "抢菜成功后播放音乐通知用户")
-	setDefault()
+	flag.Parse()
 
-	stopChan := make(chan os.Signal, 1)
-	signal.Notify(stopChan, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		<-stopChan
-		util.ClearSignConfigFile()
-		os.Exit(1)
-	}()
+	setDefault()
 
 	// 1. 初始化用户必须的参数数据
 	u := user.NewDefaultUser()

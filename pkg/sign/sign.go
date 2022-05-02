@@ -18,90 +18,86 @@ under the License.
 package sign
 
 import (
-	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"strings"
+	"sync"
 
 	"github.com/dingdong-grabber/pkg/constants"
 	"github.com/dingdong-grabber/pkg/util"
 	"k8s.io/klog"
 )
 
-type JsSign struct {
+var sign = &Cache{}
+
+type Cache struct {
 	file string
+	mtx  sync.RWMutex
+}
+
+func (c *Cache) CacheFile() string {
+	c.mtx.RLock()
+	defer c.mtx.RUnlock()
+	return c.file
+}
+
+func (c *Cache) SetCacheFile(file string) {
+	c.mtx.Lock()
+	defer c.mtx.Unlock()
+	c.file = file
+}
+
+type NodeSign struct {
+	file string
+	mtx  sync.RWMutex
+}
+
+func NewSign(file string) SignInterface {
+	return &NodeSign{
+		file: file,
+	}
 }
 
 func NewDefaultJsSign() (SignInterface, error) {
-	data, err := util.SignFile()
-	if err != nil {
-		klog.Fatal(err)
-	}
-
-	resp, err := rawRequest(constants.SignSwitch, http.MethodGet, map[string]string{
-		"user-agent": "axios/0.29.0",
-	}, nil, nil)
-
+	dir, err := util.GetRootDir()
 	if err != nil {
 		return nil, err
 	}
-	sign, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		klog.Error(err)
-		return nil, err
-	}
-	signStr := strings.TrimSuffix(string(sign), ";")
+	template := fmt.Sprintf("%s/%s", dir, constants.SignFile)
+	s := NewSign(template).(*NodeSign)
 
-	data = strings.ReplaceAll(data, "${SIGN}", signStr)
-	tmp, _ := util.SignConfigFilePath()
-	s := &JsSign{
-		file: tmp,
+	// 获取cache
+	if sign.CacheFile() != "" {
+		return s, nil
 	}
-	if err = s.Write([]byte(data)); err != nil {
+
+	// 1. 获取签名算法
+	algorithm, err := s.algorithm()
+	if err != nil {
 		return nil, err
 	}
+
+	// 2. 生成实际签名算法
+	algorithm, err = s.replace(algorithm)
+	if err != nil {
+		return nil, err
+	}
+
+	// 3.写入临时文件和全局cache中
+	if err = s.cache(algorithm); err != nil {
+		return nil, err
+	}
+
 	return s, nil
 }
 
-func rawRequest(url, method string, header map[string]string, params url.Values, body []byte) (*http.Response, error) {
-	req, err := http.NewRequest(method, url, bytes.NewReader(body))
-	if err != nil {
-		klog.Error(err)
-		return nil, err
-	}
-	if len(params) > 0 {
-		req.URL.RawQuery = params.Encode()
-	}
-	var client = &http.Client{}
-	for k, v := range header {
-		req.Header.Add(k, v)
-	}
-
-	if req.URL.Scheme == "https" {
-		client = &http.Client{
-			Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
-		}
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		klog.Error(err)
-		return nil, err
-	}
-	return resp, nil
-}
-
-func (s *JsSign) Write(data []byte) error {
-	return ioutil.WriteFile(s.file, data, 0666)
-}
-
-func (s *JsSign) Sign(secret string, data interface{}) (map[string]string, error) {
+func (s *NodeSign) Sign(secret string, data interface{}) (map[string]string, error) {
 	bytes, _ := json.Marshal(data)
 	out, err := Exec("node", []string{
-		s.file,
+		sign.CacheFile(),
 		secret,
 		string(bytes),
 	})
@@ -115,4 +111,53 @@ func (s *JsSign) Sign(secret string, data interface{}) (map[string]string, error
 		return nil, err
 	}
 	return sign, nil
+}
+
+func (s *NodeSign) algorithm() (string, error) {
+	req, err := http.NewRequest(http.MethodGet, constants.SignAlgorithm, nil)
+	if err != nil {
+		klog.Error(err)
+		return "", err
+	}
+	var client = &http.Client{
+		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
+	}
+	req.Header.Add("user-agent", "axios/0.29.0")
+	resp, err := client.Do(req)
+	if err != nil {
+		klog.Error(err)
+		return "", err
+	}
+	algorithm, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		klog.Error(err)
+		return "", err
+	}
+	return string(algorithm), err
+}
+
+func (s *NodeSign) replace(algorithm string) (string, error) {
+	data, err := ioutil.ReadFile(s.file)
+	if err != nil {
+		klog.Error(err)
+		return "", err
+	}
+	algorithm = strings.TrimSuffix(algorithm, ";")
+	algorithm = strings.ReplaceAll(string(data), "${SIGN}", algorithm)
+	return algorithm, nil
+}
+
+func (s *NodeSign) cache(algorithm string) error {
+	tmp, err := ioutil.TempFile("", "*.js")
+	klog.Infof("签名临时文件: %s", tmp.Name())
+	if err != nil {
+		klog.Error(err)
+		return err
+	}
+	if err = ioutil.WriteFile(tmp.Name(), []byte(algorithm), 0666); err != nil {
+		klog.Error(err)
+		return err
+	}
+	sign.SetCacheFile(tmp.Name())
+	return nil
 }

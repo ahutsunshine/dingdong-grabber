@@ -27,11 +27,10 @@ import (
 
 	"github.com/dingdong-grabber/pkg/notice"
 	"github.com/dingdong-grabber/pkg/order"
-	"github.com/dingdong-grabber/pkg/util"
 	"k8s.io/klog"
 )
 
-const defaultRepeatCount = 5
+const defaultRepeatCount = 3
 
 // SentinelScheduler 捡漏策略调度器
 type SentinelScheduler struct {
@@ -179,9 +178,6 @@ func (ss *SentinelScheduler) Schedule(ctx context.Context) error {
 				}
 			}
 		}
-
-		util.ClearSignConfigFile()
-
 		// 休眠30s, 让音乐飞一会
 		time.Sleep(time.Second * 30)
 

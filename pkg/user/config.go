@@ -148,7 +148,7 @@ func (u *User) SetDefaultHeaders(cookie string) {
 		"ddmc-os-version":    "15.5",
 		"ddmc-app-client-id": "1",
 		"ddmc-ip":            "",
-		"ddmc-language-code": "",
+		"ddmc-language-code": "zh",
 		"ddmc-api-version":   "9.50.2",
 		"ddmc-device-id":     "",
 		"ddmc-device-model":  "",

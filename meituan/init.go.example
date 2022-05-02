@@ -1,0 +1,14 @@
+package meituan
+
+/**
+重命名下文件名为： init.go
+*/
+func init() {
+	user.OpenId = ""
+	user.T = ""
+	user.OpenIdCipher = ""
+	user.UUID = ""
+	user.AddressId = ""
+	user.UserId = ""
+	user.AppId = ""
+}

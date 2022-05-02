@@ -2,6 +2,5 @@
 coverage.txt
 .build
 vendor
-./sign_config.js
-/sign_config.js
 sign_config.js
+dingdong_config.go

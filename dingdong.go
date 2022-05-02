@@ -69,7 +69,7 @@ func ddMain(waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 	defer waitGroup.Done()
 
-	flag.StringVar(&c, "cookie", "", "请求头部的Cookie")
+	flag.StringVar(&c, "cookie", ddConfigVar.cookie, "请求头部的Cookie")
 	flag.IntVar(&sy, "strategy", 1, "设置抢菜策略")
 
 	// 抢菜成功后是否播放《Everything I Need》通知用户

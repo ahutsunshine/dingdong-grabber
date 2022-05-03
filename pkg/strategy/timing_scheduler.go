@@ -21,6 +21,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/dingdong-grabber/pkg/config"
 	"github.com/dingdong-grabber/pkg/order"
 	"github.com/robfig/cron/v3"
 	"k8s.io/klog"
@@ -29,24 +30,28 @@ import (
 // TimingScheduler 定时策略调度器
 type TimingScheduler struct {
 	Scheduler `json:",inline"`
-	crons     []string // cron job 调度时间
+	cronJobs  []string // cron job 调度时间
 }
 
-func NewTimingScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int, crons []string, play bool, pushToken string) Interface {
-	if minSleepMillis > maxSleepMillis {
+func NewTimingScheduler(o *order.Order, c *config.Config) Interface {
+	var (
+		minSleepMillis = c.MinSleepMillis
+		maxSleepMillis = c.MaxSleepMillis
+	)
+	if minSleepMillis > c.MaxSleepMillis {
 		maxSleepMillis = minSleepMillis
 	}
 	return &TimingScheduler{
 		Scheduler: Scheduler{
 			o:                    o,
-			play:                 play,
-			baseTheadSize:        baseTheadSize,
-			submitOrderTheadSize: submitOrderTheadSize,
+			play:                 c.Play,
+			baseTheadSize:        c.BaseThreadSize,
+			submitOrderTheadSize: c.SubmitOrderThreadSize,
 			minSleepMillis:       minSleepMillis,
 			maxSleepMillis:       maxSleepMillis,
-			pushToken:            pushToken,
+			pushToken:            c.PushToken,
 		},
-		crons: crons,
+		cronJobs: c.CronJobs,
 	}
 }
 
@@ -65,7 +70,7 @@ func (ts *TimingScheduler) Schedule(ctx context.Context) error {
 	}
 
 	// 定义的定时任务
-	for _, spec := range ts.crons {
+	for _, spec := range ts.cronJobs {
 		if _, err := c.AddFunc(spec, func() {
 			_ = ts.Scheduler.Schedule(ctx)
 		}); err != nil {

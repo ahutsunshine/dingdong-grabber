@@ -20,6 +20,7 @@ package strategy
 import (
 	"context"
 
+	"github.com/dingdong-grabber/pkg/config"
 	"github.com/dingdong-grabber/pkg/order"
 )
 
@@ -28,18 +29,22 @@ type ManualScheduler struct {
 	Scheduler `json:",inline"`
 }
 
-func NewManualScheduler(o *order.Order, baseTheadSize, submitOrderTheadSize, minSleepMillis, maxSleepMillis int, play bool, pushToken string) Interface {
-	if minSleepMillis > maxSleepMillis {
+func NewManualScheduler(o *order.Order, c *config.Config) Interface {
+	var (
+		minSleepMillis = c.MinSleepMillis
+		maxSleepMillis = c.MaxSleepMillis
+	)
+	if minSleepMillis > c.MaxSleepMillis {
 		maxSleepMillis = minSleepMillis
 	}
 	return &ManualScheduler{Scheduler{
 		o:                    o,
-		play:                 play,
-		baseTheadSize:        baseTheadSize,
-		submitOrderTheadSize: submitOrderTheadSize,
+		play:                 c.Play,
+		baseTheadSize:        c.BaseThreadSize,
+		submitOrderTheadSize: c.SubmitOrderThreadSize,
 		minSleepMillis:       minSleepMillis,
 		maxSleepMillis:       maxSleepMillis,
-		pushToken:            pushToken,
+		pushToken:            c.PushToken,
 	}}
 }
 

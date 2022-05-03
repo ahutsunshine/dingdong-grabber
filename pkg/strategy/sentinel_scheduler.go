@@ -25,6 +25,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/dingdong-grabber/pkg/config"
 	"github.com/dingdong-grabber/pkg/notice"
 	"github.com/dingdong-grabber/pkg/order"
 	"k8s.io/klog"
@@ -38,7 +39,11 @@ type SentinelScheduler struct {
 	repeatCount int
 }
 
-func NewSentinelScheduler(o *order.Order, minSleepMillis, maxSleepMillis int, play bool, pushToken string) Interface {
+func NewSentinelScheduler(o *order.Order, c *config.Config) Interface {
+	var (
+		minSleepMillis = c.MinSleepMillis
+		maxSleepMillis = c.MaxSleepMillis
+	)
 	if minSleepMillis < 5000 {
 		minSleepMillis = 15000
 		klog.Info("使用默认哨兵策略，每隔15-30s发起一起请求")
@@ -50,10 +55,10 @@ func NewSentinelScheduler(o *order.Order, minSleepMillis, maxSleepMillis int, pl
 	return &SentinelScheduler{
 		Scheduler: Scheduler{
 			o:              o,
-			play:           play,
+			play:           c.Play,
 			minSleepMillis: minSleepMillis,
 			maxSleepMillis: maxSleepMillis,
-			pushToken:      pushToken,
+			pushToken:      c.PushToken,
 		},
 		repeatCount: defaultRepeatCount,
 	}

@@ -208,7 +208,7 @@ func (u *User) SetDefaultBody() {
 		"idfa":             []string{headers["ddmc-idfa"]},
 		"ip":               []string{headers["ddmc-ip"]},
 		"localeidentifier": []string{headers["ddmc-locale-identifier"]},
-		"app_client_id":    []string{headers["ddmc-build-version"]},
+		"app_client_id":    []string{headers["ddmc-app-client-id"]},
 		"applet_source":    []string{""},
 		"channel":          []string{"App Store"},
 		"sharer_uid":       []string{""},

@@ -18,11 +18,10 @@ under the License.
 package sign
 
 import (
-	"crypto/tls"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"strings"
 	"sync"
 
@@ -114,26 +113,11 @@ func (s *NodeSign) Sign(secret string, data interface{}) (map[string]string, err
 }
 
 func (s *NodeSign) algorithm() (string, error) {
-	req, err := http.NewRequest(http.MethodGet, constants.SignAlgorithm, nil)
+	algorithm, err := base64.StdEncoding.DecodeString(constants.SignAlgorithm)
 	if err != nil {
-		klog.Error(err)
 		return "", err
 	}
-	var client = &http.Client{
-		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
-	}
-	req.Header.Add("user-agent", "axios/0.29.0")
-	resp, err := client.Do(req)
-	if err != nil {
-		klog.Error(err)
-		return "", err
-	}
-	algorithm, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		klog.Error(err)
-		return "", err
-	}
-	return string(algorithm), err
+	return string(algorithm), nil
 }
 
 func (s *NodeSign) replace(algorithm string) (string, error) {

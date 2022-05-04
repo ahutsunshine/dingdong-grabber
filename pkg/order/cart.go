@@ -55,9 +55,9 @@ func (o *Order) GetCart() (map[string]interface{}, error) {
 		body   = o.user.Body()
 	)
 	client.SetBody(body, map[string]string{
-		"is_filter": "0",                                                                                         // 关键参数，必须要带
-		"is_load":   "1",                                                                                         // 关键参数，必须要带
-		"ab_config": `{"key_cart_discount_price":"C","key_no_condition_barter":true,"key_show_cart_barter":"0"}`, // 可选参数
+		"is_filter": "0",                                                                                          // 关键参数，必须要带
+		"is_load":   "1",                                                                                          // 关键参数，必须要带
+		"ab_config": `{"key_show_cart_barter":"0","key_no_condition_barter":false,"key_cart_discount_price":"C"}`, // 可选参数
 	})
 
 	resp, err := client.Get(o.user.Header(), body)

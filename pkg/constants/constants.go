@@ -24,6 +24,5 @@ const (
 	Sign         = "sign"
 	ImSecret     = "im_secret"
 
-	SignFile       = "sign.js"
-	SignConfigFile = "sign_config.js"
+	SignFile = "sign.js"
 )

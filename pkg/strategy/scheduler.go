@@ -28,7 +28,6 @@ import (
 
 	"github.com/dingdong-grabber/pkg/notice"
 	"github.com/dingdong-grabber/pkg/order"
-	"github.com/dingdong-grabber/pkg/util"
 	"k8s.io/klog"
 )
 
@@ -179,7 +178,6 @@ func (s *Scheduler) Schedule(ctx context.Context) error {
 						}
 					}
 				}
-				util.ClearSignConfigFile()
 				// 休眠30s, 让音乐飞一会
 				time.Sleep(time.Second * 30)
 

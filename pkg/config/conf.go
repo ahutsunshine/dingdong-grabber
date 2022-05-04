@@ -1,16 +1,25 @@
 package config
 
+type DeviceType string
+
+const (
+	IosType     DeviceType = "ios"
+	AndroidType DeviceType = "android"
+	DefaultType DeviceType = "default"
+)
+
 // Config 字段含义详情请参考config.yaml
 type Config struct {
-	Cookie                string   `yaml:"cookie"`
-	Strategy              int      `yaml:"strategy"`
-	CronJobs              []string `yaml:"cron_jobs"`
-	BaseThreadSize        int      `yaml:"base_thread_size"`
-	SubmitOrderThreadSize int      `yaml:"submit_order_thread_size"`
-	MinSleepMillis        int      `yaml:"min_sleep_millis"`
-	MaxSleepMillis        int      `yaml:"max_sleep_millis"`
-	PushToken             string   `yaml:"push_token"`
-	Play                  bool     `yaml:"play"`
+	Device                DeviceType `yaml:"device"`
+	Cookie                string     `yaml:"cookie"`
+	Strategy              int        `yaml:"strategy"`
+	CronJobs              []string   `yaml:"cron_jobs"`
+	BaseThreadSize        int        `yaml:"base_thread_size"`
+	SubmitOrderThreadSize int        `yaml:"submit_order_thread_size"`
+	MinSleepMillis        int        `yaml:"min_sleep_millis"`
+	MaxSleepMillis        int        `yaml:"max_sleep_millis"`
+	PushToken             string     `yaml:"push_token"`
+	Play                  bool       `yaml:"play"`
 }
 
 type Conf struct {

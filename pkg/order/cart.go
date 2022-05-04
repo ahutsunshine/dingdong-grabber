@@ -29,17 +29,17 @@ import (
 func (o *Order) CheckAll() error {
 	var (
 		client = http.NewClient(constants.CartCheck)
-		body   = o.user.Body()
+		params = o.user.QueryParams()
 	)
 	// 关键参数，必须要带
-	client.SetBody(body, map[string]string{
+	client.SetParams(params, map[string]string{
 		"ab_config": `{"key_cart_discount_price":"C","key_no_condition_barter":true,"key_show_cart_barter":"0"}`,
 		"is_check":  "1",
 		"is_load":   "1",
 		"is_filter": "0",
 	})
 
-	if _, err := client.Get(o.user.Header(), body); err != nil {
+	if _, err := client.Get(o.user.Headers(), params); err != nil {
 		klog.Infof("勾选购物车全选按钮失败, 错误: %v", err)
 		return err
 	}
@@ -52,15 +52,15 @@ func (o *Order) CheckAll() error {
 func (o *Order) GetCart() (map[string]interface{}, error) {
 	var (
 		client = http.NewClient(constants.Cart)
-		body   = o.user.Body()
+		params = o.user.QueryParams()
 	)
-	client.SetBody(body, map[string]string{
+	client.SetParams(params, map[string]string{
 		"is_filter": "0",                                                                                          // 关键参数，必须要带
 		"is_load":   "1",                                                                                          // 关键参数，必须要带
 		"ab_config": `{"key_show_cart_barter":"0","key_no_condition_barter":false,"key_cart_discount_price":"C"}`, // 可选参数
 	})
 
-	resp, err := client.Get(o.user.Header(), body)
+	resp, err := client.Get(o.user.Headers(), params)
 	if err != nil {
 		klog.Errorf("获取购物车商品失败, 错误: %v", err)
 		return nil, err

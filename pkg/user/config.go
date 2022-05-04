@@ -25,6 +25,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dingdong-grabber/pkg/config"
+	"github.com/dingdong-grabber/pkg/user/ios"
+
 	"github.com/dingdong-grabber/pkg/constants"
 	"github.com/dingdong-grabber/pkg/http"
 	"k8s.io/klog"
@@ -32,29 +35,41 @@ import (
 
 type User struct {
 	c          *http.Client
+	conf       *config.Config
+	device     DeviceInterface
 	userDetail *UserDetail
 	addressId  string
 	headers    map[string]string
-	body       url.Values
+	params     url.Values
 	mtx        sync.RWMutex
 }
 
-func NewDefaultUser() *User {
-	return &User{
-		c: &http.Client{},
+func NewDefaultUser(conf *config.Config) *User {
+	u := &User{
+		c:       &http.Client{},
+		conf:    conf,
+		headers: make(map[string]string),
+		params:  url.Values{},
 	}
+	u.device = getDevice(conf)
+	return u
 }
 
-func (u *User) SetUserDetail(userDetail *UserDetail) {
-	u.mtx.Lock()
-	defer u.mtx.Unlock()
-	u.userDetail = userDetail
-}
-
-func (u *User) UserDetail() *UserDetail {
-	u.mtx.RLock()
-	defer u.mtx.RUnlock()
-	return u.userDetail
+func getDevice(conf *config.Config) DeviceInterface {
+	var device DeviceInterface
+	switch conf.Device {
+	case config.IosType:
+		device = ios.NewIosDevice()
+	case config.AndroidType:
+	case config.DefaultType:
+		if conf.Cookie == "" {
+			klog.Fatal("默认模式下cookie为必填项")
+		}
+		device = ios.NewIosDevice()
+	default:
+		klog.Fatalf("暂不支持此设备类型: %s，支持: [ios, android, default]", conf.Device)
+	}
+	return device
 }
 
 func (u *User) AddressId() string {
@@ -69,33 +84,33 @@ func (u *User) SetAddressId(addressId string) {
 	u.addressId = addressId
 }
 
-func (u *User) LoadConfig(cookie string) error {
-	if cookie == "" {
-		klog.Fatal("请求头cookie为必填项")
+func (u *User) LoadConfig() error {
+	var file = "cart.chlsj"
+	if u.conf.Device != config.IosType {
+		file = "example.chlsj"
 	}
+	if err := u.device.LoadConfig(file); err != nil {
+		klog.Fatal(err)
+	}
+	// 设置header
+	u.SetHeaders(u.device.Headers())
+	// 设置 query params
+	u.SetQueryParams(u.device.QueryParams())
 
-	// 设置Header默认请求参数
-	u.SetDefaultHeaders(cookie)
-
-	// 设置Body默认请求参数
-	u.SetDefaultBody()
+	if u.conf.Device != config.IosType {
+		u.SetHeaders(map[string]string{
+			"cookie": u.conf.Cookie,
+		})
+	}
 
 	ud, err := u.GetUserDetail()
 	if err != nil {
 		return err
 	}
-	// 设置用户详情
-	u.SetUserDetail(ud)
 
-	// 设置header ddmc uid
+	// 设置header im_secret
 	u.SetHeaders(map[string]string{
-		"ddmc-uid":  ud.UserInfo.Id,
 		"im_secret": ud.UserInfo.ImSecret,
-	})
-
-	// 设置body uid
-	u.SetBody(map[string]string{
-		"uid": ud.UserInfo.Id,
 	})
 
 	addr, err := u.GetDefaultAddr()
@@ -105,14 +120,18 @@ func (u *User) LoadConfig(cookie string) error {
 	// 设置收货地址ID
 	u.SetAddressId(addr.Id)
 
-	// 设置Header和Body收货站ID和城市编码
+	// 设置Header和Query params收货站ID,城市编码和经纬度
 	u.SetHeaders(map[string]string{
 		"ddmc-station-id":  addr.StationId,
 		"ddmc-city-number": addr.CityNumber,
+		"ddmc-longitude":   fmt.Sprintf("%v", addr.Location.Location[0]),
+		"ddmc-latitude":    fmt.Sprintf("%v", addr.Location.Location[1]),
 	})
-	u.SetBody(map[string]string{
+	u.SetQueryParams(map[string]string{
 		"station_id":  addr.StationId,
 		"city_number": addr.CityNumber,
+		"longitude":   fmt.Sprintf("%v", addr.Location.Location[0]),
+		"latitude":    fmt.Sprintf("%v", addr.Location.Location[1]),
 	})
 
 	return nil
@@ -173,8 +192,8 @@ func (u *User) SetHeaders(headers map[string]string) {
 	}
 }
 
-// Header 返回请求header的复制
-func (u *User) Header() map[string]string {
+// Headers 返回请求headers的复制
+func (u *User) Headers() map[string]string {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 	var cp = make(map[string]string)
@@ -184,12 +203,12 @@ func (u *User) Header() map[string]string {
 	return cp
 }
 
-// SetDefaultBody 设置默认的用户初始化数据
-func (u *User) SetDefaultBody() {
+// SetDefaultParams 设置默认的用户初始化数据
+func (u *User) SetDefaultParams() {
 	u.mtx.Lock()
 	defer u.mtx.Unlock()
 	var headers = u.headers
-	u.body = url.Values{
+	u.params = url.Values{
 		"s_id":         []string{""},
 		"device_token": []string{""},
 
@@ -216,43 +235,43 @@ func (u *User) SetDefaultBody() {
 	}
 }
 
-// SetBody 设置body参数，避免body因多并发引起的concurrent map writes
-func (u *User) SetBody(body map[string]string) {
+// SetQueryParams 设置query params参数，避免因多并发引起的concurrent map writes
+func (u *User) SetQueryParams(params map[string]string) {
 	u.mtx.Lock()
 	defer u.mtx.Unlock()
-	for k, v := range body {
-		u.body[k] = []string{v}
+	for k, v := range params {
+		u.params[k] = []string{v}
 	}
 }
 
-// Body 返回请求body的复制
-func (u *User) Body() url.Values {
+// QueryParams 返回query params的复制
+func (u *User) QueryParams() url.Values {
 	u.mtx.RLock()
 	defer u.mtx.RUnlock()
 	var cp = make(url.Values)
-	for k, v := range u.body {
+	for k, v := range u.params {
 		cp[k] = v
 	}
 	return cp
 }
 
 func (u *User) GetUserDetail() (*UserDetail, error) {
-	var (
-		client = http.NewClient(constants.UserDetail)
-		body   = u.Body()
-	)
+	client := http.NewClient(constants.UserDetail)
+	params := u.QueryParams()
 
-	resp, err := client.Get(u.Header(), body)
+	resp, err := client.Get(u.Headers(), params)
 	if err != nil {
-		klog.Info(err.Error())
 		return nil, err
 	}
 
-	var ud UserDetail
-	userBytes, _ := json.Marshal(resp.Data)
-	if err := json.Unmarshal(userBytes, &ud); err != nil {
+	return u.DecodeUser(resp.Data)
+}
+
+func (u *User) DecodeUser(data interface{}) (*UserDetail, error) {
+	bytes, _ := json.Marshal(data)
+	if err := json.Unmarshal(bytes, &u.userDetail); err != nil {
 		return nil, fmt.Errorf("解析用户数据出错, 错误: %v", err.Error())
 	}
-	klog.Infof("获取用户信息成功, 用户: %s, id: %s", ud.UserInfo.Name, ud.UserInfo.Id)
-	return &ud, nil
+	klog.Infof("获取用户信息成功, 用户: %s, id: %s", u.userDetail.UserInfo.Name, u.userDetail.UserInfo.Id)
+	return u.userDetail, nil
 }

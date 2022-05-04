@@ -43,6 +43,8 @@ func (sf *schedulerFactory) Build(c *config.Config, u *user.User) Interface {
 		return NewTimingScheduler(order.NewOrder(u, order.TimingStrategy), c)
 	case 2: // 哨兵策略
 		return NewSentinelScheduler(order.NewOrder(u, order.SentinelStrategy), c)
+	case 3: // 测试策略
+		return NewTestScheduler(order.NewOrder(u, order.TestStrategy))
 	default:
 		klog.Fatalf("不支持此无效策略: %d", c.Strategy)
 	}

@@ -35,6 +35,7 @@ const (
 	ManualStrategy   Strategy = 0 // 人工
 	TimingStrategy   Strategy = 1 // 定时
 	SentinelStrategy Strategy = 2 // 哨兵
+	TestStrategy     Strategy = 3 // 测试
 )
 
 type Order struct {
@@ -112,18 +113,19 @@ func (o *Order) CheckOrder() map[string]interface{} {
 func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 	var (
 		client      = http.NewClient(constants.ReserveTime)
-		body        = o.user.Body()
-		products, _ = json.Marshal([]interface{}{o.cart["products"]})
+		params      = o.user.QueryParams()
+		products, _ = json.Marshal(o.cart["products"])
 	)
 
-	client.SetBody(body, map[string]string{
+	products, _ = json.Marshal([]interface{}{string(products)})
+	client.SetParams(params, map[string]string{
 		// 关键参数
 		"ab_config":  `{"ETA_time_default_selection":"D1.2"}`,
 		"address_id": o.user.AddressId(),
 		"products":   string(products),
 	})
 
-	resp, err := client.Post(o.user.Header(), body)
+	resp, err := client.Post(o.user.Headers(), params)
 	if err != nil {
 		klog.Errorf("获取预约时间失败, 错误: %v", err)
 		return nil, err
@@ -165,7 +167,7 @@ func (o *Order) GetMultiReserveTime() (map[string]interface{}, error) {
 func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 	var (
 		client = http.NewClient(constants.CheckOrder)
-		body   = o.user.Body()
+		params = o.user.QueryParams()
 		cart   = o.Cart()
 	)
 
@@ -184,7 +186,7 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 	}
 	packagesBytes, _ := json.Marshal([]interface{}{packages})
 
-	client.SetBody(body, map[string]string{
+	client.SetParams(params, map[string]string{
 		// 设置基础参数信息
 		"address_id":        o.user.AddressId(),
 		"user_ticket_id":    "default",
@@ -198,7 +200,7 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 		"packages":          string(packagesBytes),
 	})
 
-	resp, err := client.Post(o.user.Header(), body)
+	resp, err := client.Post(o.user.Headers(), params)
 	if err != nil {
 		klog.Errorf("获取订单确认信息失败, 错误: %s", err.Error())
 		return nil, err
@@ -238,7 +240,7 @@ func (o *Order) GetCheckOrder() (map[string]interface{}, error) {
 func (o *Order) SubmitOrder() (bool, error) {
 	var (
 		client       = http.NewClient(constants.SubmitOrder)
-		body         = o.user.Body()
+		params       = o.user.QueryParams()
 		reservedTime = o.ReservedTime()
 		checkOrder   = o.CheckOrder()
 		cart         = o.Cart()
@@ -255,7 +257,7 @@ func (o *Order) SubmitOrder() (bool, error) {
 		"receipt_without_sku":    "0",
 		"pay_type":               2,
 		"user_ticket_id":         checkOrder["user_ticket_id"],
-		"current_position":       []string{body["latitude"][0], body["longitude"][0]},
+		"current_position":       []string{params["latitude"][0], params["longitude"][0]},
 	}
 	packages := []map[string]interface{}{
 		{
@@ -294,12 +296,12 @@ func (o *Order) SubmitOrder() (bool, error) {
 	}
 	paymentBytes, _ := json.Marshal(payment)
 
-	client.SetBody(body, map[string]string{
+	client.SetParams(params, map[string]string{
 		"package_order": string(paymentBytes),
 		"ab_config":     `{"key_no_condition_barter":false}`,
 	})
 
-	resp, err := client.Post(o.user.Header(), body)
+	resp, err := client.Post(o.user.Headers(), params)
 	if err != nil {
 		klog.Errorf("提交订单失败, 错误: %s 当前下单总金额：%v", err, cart["total_money"])
 		return false, err

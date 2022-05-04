@@ -46,7 +46,7 @@ func NewSentinelScheduler(o *order.Order, c *config.Config) Interface {
 	)
 	if minSleepMillis < 5000 {
 		minSleepMillis = 15000
-		klog.Info("使用默认哨兵策略，每隔15-30s发起一起请求")
+		klog.Info("使用默认哨兵策略，每隔15-30s发起一次请求")
 	}
 	if maxSleepMillis <= minSleepMillis {
 		maxSleepMillis = minSleepMillis + 30000
@@ -65,11 +65,12 @@ func NewSentinelScheduler(o *order.Order, c *config.Config) Interface {
 }
 
 func (ss *SentinelScheduler) Schedule(ctx context.Context) error {
+	klog.Info("正在使用哨兵模式，默认15-30s发起一次请求，抢菜30次会随机休眠5-10分钟避免风控")
 	var loopCount int
 	for !ss.o.Stop() {
 		time.Sleep(time.Duration(rand.Intn(ss.maxSleepMillis-ss.minSleepMillis)+ss.minSleepMillis) * time.Millisecond)
 		loopCount++
-		// 每循环抢菜60次就休会5-10分钟
+		// 每循环抢菜30次随机休眠5-10分钟
 		if loopCount%30 == 0 {
 			time.Sleep(time.Duration(rand.Intn(5*60000)+5*60000) * time.Millisecond)
 		}

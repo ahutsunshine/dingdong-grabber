@@ -76,28 +76,28 @@ func (i *ios) decodeParams(queryStr string) error {
 		return err
 	}
 	var params = map[string]string{
-		"api_version":      values["api_version"][0],
-		"app_client_id":    values["app_client_id"][0],
-		"app_type":         values["app_type"][0],
-		"buildVersion":     values["buildVersion"][0],
-		"channel":          values["channel"][0],
-		"city_number":      values["city_number"][0],
-		"countryCode":      values["countryCode"][0],
-		"device_id":        values["device_id"][0],
-		"device_model":     values["device_model"][0],
-		"device_name":      values["device_name"][0],
-		"device_token":     values["device_token"][0],
-		"idfa":             values["idfa"][0],
-		"ip":               values["ip"][0],
-		"languageCode":     values["languageCode"][0],
-		"latitude":         values["latitude"][0],
-		"localeIdentifier": values["localeIdentifier"][0],
-		"longitude":        values["longitude"][0],
-		"os_version":       values["os_version"][0],
-		"seqid":            values["seqid"][0],
-		"station_id":       values["station_id"][0],
-		"time":             values["time"][0],
-		"uid":              values["uid"][0],
+		"api_version":      getParamValue("api_version", values),
+		"app_client_id":    getParamValue("app_client_id", values),
+		"app_type":         getParamValue("app_type", values),
+		"buildVersion":     getParamValue("buildVersion", values),
+		"channel":          getParamValue("channel", values),
+		"city_number":      getParamValue("city_number", values),
+		"countryCode":      getParamValue("countryCode", values),
+		"device_id":        getParamValue("device_id", values),
+		"device_model":     getParamValue("device_model", values),
+		"device_name":      getParamValue("device_name", values),
+		"device_token":     getParamValue("device_token", values),
+		"idfa":             getParamValue("idfa", values),
+		"ip":               getParamValue("ip", values),
+		"languageCode":     getParamValue("languageCode", values),
+		"latitude":         getParamValue("latitude", values),
+		"localeIdentifier": getParamValue("localeIdentifier", values),
+		"longitude":        getParamValue("longitude", values),
+		"os_version":       getParamValue("os_version", values),
+		"seqid":            getParamValue("seqid", values),
+		"station_id":       getParamValue("station_id", values),
+		"time":             getParamValue("time", values),
+		"uid":              getParamValue("uid", values),
 	}
 	for k, v := range values {
 		params[k] = v[0]
@@ -106,6 +106,13 @@ func (i *ios) decodeParams(queryStr string) error {
 	return nil
 }
 
+func getParamValue(param string, params url.Values) string {
+	if v, ok := params[param]; !ok || len(v) == 0 {
+		return ""
+	} else {
+		return v[0]
+	}
+}
 func (i *ios) decodeHeader(headers []charles.HeaderEntry) error {
 	if len(headers) == 0 {
 		klog.Error("无效的cart.chlsj文件，无headers参数，请参考charles/ios/example.chlsj文件")

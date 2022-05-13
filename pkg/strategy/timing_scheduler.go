@@ -19,7 +19,6 @@ package strategy
 
 import (
 	"context"
-	"strings"
 
 	"github.com/dingdong-grabber/pkg/config"
 	"github.com/dingdong-grabber/pkg/order"
@@ -57,18 +56,8 @@ func NewTimingScheduler(o *order.Order, c *config.Config) Interface {
 
 // Schedule 使用cron调度
 func (ts *TimingScheduler) Schedule(ctx context.Context) error {
+	klog.Info("正在使用定时模式，默认在5:59:40或者08:29:40开始抢菜")
 	c := cron.New(cron.WithSeconds())
-
-	// 定时任务每隔3s需要检测token是否过期，过期则直接退出
-	if _, err := c.AddFunc("0/3 * * * * *", func() {
-		if _, err := ts.Scheduler.o.User().GetDefaultAddr(); err != nil && strings.Contains(err.Error(), "已过期") {
-			klog.Fatal("用户Cookie已过期，请重新填写")
-		}
-	}); err != nil {
-		klog.Error(err)
-		return err
-	}
-
 	// 定义的定时任务
 	for _, spec := range ts.cronJobs {
 		if _, err := c.AddFunc(spec, func() {

@@ -2,5 +2,6 @@
 coverage.txt
 .build
 vendor
-sign_config.js
-dingdong_config.go
+./sign_config.js
+charles/ios/cart.chlsj
+charles/android/cart.chlsj

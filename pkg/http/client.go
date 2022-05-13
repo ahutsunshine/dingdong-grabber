@@ -19,10 +19,12 @@ package http
 
 import (
 	"bytes"
+	"compress/gzip"
 	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -67,6 +69,7 @@ func (c *Client) SetUrl(url string) {
 func (c *Client) request(method string, headers map[string]string, params url.Values) (*Response, error) {
 	req, err := http.NewRequest(method, c.Url(), nil)
 	if err != nil {
+		klog.Error(err)
 		return nil, err
 	}
 	if len(params) > 0 {
@@ -92,16 +95,22 @@ func decode(req *http.Request, headers map[string]string) (rsp *Response, err er
 		klog.Error(err)
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusRequestURITooLong {
-		klog.Info(req.URL.RawQuery)
-		return nil, errors.New("请求参数过长")
+	var reader io.ReadCloser
+	switch resp.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, err = gzip.NewReader(resp.Body)
+		defer reader.Close()
+	default:
+		reader = resp.Body
 	}
 
-	if err = json.NewDecoder(resp.Body).Decode(&rsp); err != nil {
+	if err = json.NewDecoder(reader).Decode(&rsp); err != nil {
 		klog.Error(err)
 		return nil, err
 	}
+
 	return checkSuccess(rsp)
 }
 
@@ -188,23 +197,23 @@ func (c *Client) rawRequest(method string, header map[string]string, params url.
 	return resp, nil
 }
 
-func (c *Client) SetBody(body url.Values, params map[string]string) {
-	for k, v := range params {
-		body[k] = []string{v}
+func (c *Client) SetParams(params url.Values, addition map[string]string) {
+	for k, v := range addition {
+		params[k] = []string{v}
 	}
 }
 
-func (c *Client) Sign(secret string, body url.Values) error {
+func (c *Client) Sign(secret string, params url.Values) error {
 	s, err := sign.NewDefaultJsSign()
 	if err != nil {
 		return err
 	}
-	signs, err := s.Sign(secret, body)
+	signs, err := s.Sign(secret, params)
 	if err != nil {
 		return err
 	}
-	body[constants.SignNars] = []string{signs[constants.SignNars]}
-	body[constants.SignSesi] = []string{signs[constants.SignSesi]}
-	body[constants.Sign] = []string{signs[constants.Sign]}
+	params[constants.SignNars] = []string{signs[constants.SignNars]}
+	params[constants.SignSesi] = []string{signs[constants.SignSesi]}
+	params[constants.Sign] = []string{signs[constants.Sign]}
 	return nil
 }

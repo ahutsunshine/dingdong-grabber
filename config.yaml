@@ -1,13 +1,14 @@
 name: dingdong-grabber
 dingdong:
-  cookie: h0vh7h49022985g01vy58uhy06y3u90906ho1369v5vuuhtjzi2y833tl2hg8gh5 # 必须填写用户cookie， cookie代表人的身份
-  strategy: 0 #  抢菜策略, 0: 人工策略，1: 定时策略, 默认是定时策略，2: 哨兵策略。人工策略: 程序运行即开始抢菜, 此策略下程序默认只会跑2分钟，如果没有商品库存，则会立即停止。 定时策略: 定时抢菜，事先订好时间，叮咚默认是早上5:59:50和8:29:50开始抢菜，这种模式要避免启动过早导致用户登录信息过期。 哨兵策略: 捡漏模式，长期运行捡漏可配送时间
+  device: default # default, android, ios三种设备。default: 使用默认参数抢菜，但是有风控风险，设置前最好先使用测试策略(strategy设为3)预先跑一下查看抢菜流程是否跑通。 android, ios: 请根据教程将.chlsj文件存在相应设备的根目录charles/下
+  cookie:     # default和android device必填项，ios无需填写(ios device可从charles/ios/cart.chlsj文件中读取)。
+  strategy: 3 # 抢菜策略, 0: 人工策略，1: 定时策略, 默认是定时策略，2: 哨兵策略，3: 测试策略。人工策略: 程序运行即开始抢菜, 此策略下程序默认只会跑2分钟，如果没有商品库存，则会立即停止。 定时策略: 定时抢菜，事先订好时间，叮咚默认是早上5:59:50和8:29:50开始抢菜，这种模式要避免启动过早导致用户登录信息过期。 哨兵策略: 捡漏模式，长期运行捡漏可配送时间。 测试策略: 测试整个流程是否跑通
   cron_jobs: # 使用cron job定义抢菜时间, 语法: 秒 分  时 日 月 周 (50 59 05  * *  *)
-    - 30 59 05 * * ?  #	每天 5:59:50秒的时候开始执行
-    - 30 29 08 * * ?  # 每天 08:29:50秒的时候开始执行
-  base_thread_size: 2 # 默认基础信息执行线程数, 建议不要超过2，否则容易被风控
+    - 40 59 05 * * ?  #	每天5:59:40开始执行
+    - 40 29 08 * * ?  # 每天08:29:40开始执行
+  base_thread_size: 1 # 默认基础信息执行线程数, 建议不要超过2，否则容易被风控
   submit_order_thread_size: 2 # 默认提交订单执行线程数, 建议不要超过2，否则容易被风控
-  min_sleep_millis: 3000  # 默认抢菜最小时间间隔 300ms
-  max_sleep_millis: 5000  # 默认抢菜最大时间间隔 500ms
+  min_sleep_millis: 300  # 默认抢菜最小s时间间隔 300ms
+  max_sleep_millis: 500  # 默认抢菜最大时间间隔 500ms
   push_token: "" # 可选参数，可不填. 用于推送下单成功消息, http://www.pushplus.plus
   play: true # 抢菜成功后是否播放《Everything I Need》通知用户, true: 播放, false: 不播放

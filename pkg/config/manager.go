@@ -43,8 +43,8 @@ func (m *Manager) Validate() error {
 	if m.Conf == nil {
 		return errors.New("根目录config.yaml必须配置参数")
 	}
-	if m.Conf.Config.Cookie == "" {
-		return errors.New("请求头cookie为必填项")
+	if m.Conf.Config.Cookie == "" && m.Conf.Config.Device != IosType && m.Conf.Config.Strategy != 3 {
+		return errors.New("非测试模式(strategy!=3)或者使用android或default device时，请求头cookie为必填项")
 	}
 	return nil
 }

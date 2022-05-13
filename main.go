@@ -26,17 +26,28 @@ import (
 	"k8s.io/klog"
 )
 
-// 更新兼容叮咚微信小程序版本：2.85.2
+// 请注意，请根据README中的教程在config.yaml中填写必要配置。如有必要，请在charles/文件夹下配置*.chlsj基础文件，此文件包含了用户手机真实环境，
+// 可较大可能避免被风控，但还是治标不治本，不可长时间运行。
+
+// **************************
+// 非常重要！！非常重要！！非常重要！！
+// 建议抢菜前，在config.yaml中将strategy设置为3(测试模式)，用于测试配置是否正确，流程是否已通。
+// 如果不通，请不要运行其他策略，避免风控。
+// 1. 目前仅可以支持ios设备
+// 2. 代码还有瑕疵需要完善，最近太累了，让我缓一缓
+// 3. 代码此版本仅做参考，后续会继续更新
+// **************************
+
 func main() {
 	// 1. 加载全局配置: 根目录config.yaml，用户只需配置cookie参数，其余均是可循参数
 	m := config.Manager{}
 	if err := m.LoadConfig(); err != nil {
-		klog.Fatal()
+		klog.Fatal(err)
 	}
 
 	// 2. 初始化用户必须的参数数据
-	u := user.NewDefaultUser()
-	if err := u.LoadConfig(m.Conf.Config.Cookie); err != nil {
+	u := user.NewDefaultUser(m.Conf.Config)
+	if err := u.LoadConfig(); err != nil {
 		return
 	}
 
